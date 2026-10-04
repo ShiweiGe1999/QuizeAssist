@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizAssist Benchmark & Test Page</title>
+  <style>
+    :root {
+      --bg: #181816;
+      --card-bg: #242422;
+      --border: #3a3834;
+      --text: #fbfaf8;
+      --text-muted: #b5b0a6;
+      --terracotta: #d97757;
+      --terracotta-hover: #c36545;
+      --sage: #5bb98c;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .quiz-container {
+      max-width: 760px;
+      width: 100%;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      font-family: 'Charter', 'Iowan Old Style', 'Palatino', Georgia, serif;
+      margin-bottom: 8px;
+      font-size: 32px;
+      color: var(--text);
+    }
+    .header p {
+      color: var(--text-muted);
+      font-size: 14.5px;
+    }
+    .question-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      transition: all 0.3s ease;
+    }
+    .question-title {
+      font-family: 'Charter', 'Iowan Old Style', 'Palatino', Georgia, serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      line-height: 1.55;
+      color: #fbfaf8;
+    }
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .choice-item {
+      display: flex;
+      align-items: center;
+      background: #1c1c1b;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 18px;
+      cursor: pointer;
+      transition: border-color 0.2s, background-color 0.2s;
+    }
+    .choice-item:hover {
+      border-color: #55524c;
+      background: #272725;
+    }
+    .choice-item input {
+      margin-right: 12px;
+      accent-color: var(--terracotta);
+      cursor: pointer;
+    }
+    .choice-text {
+      font-size: 15px;
+      color: #ece8e1;
+    }
+    .code-block {
+      background: #141413;
+      border: 1px solid #33312d;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-family: "Fira Code", monospace;
+      font-size: 13.5px;
+      color: #f2a378;
+      margin: 10px 0 16px 0;
+    }
+    .banner {
+      background: rgba(217, 119, 87, 0.09);
+      border: 1px solid rgba(217, 119, 87, 0.25);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .banner strong {
+      color: #f2a378;
+      font-family: 'Charter', Georgia, serif;
+      font-size: 15px;
+    }
+    .badge {
+      display: inline-block;
+      background: #2b2b28;
+      color: #ece8e1;
+      font-family: monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .demo-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: 1px solid #45433e;
+      background: #242422;
+      color: #ece8e1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .demo-btn:hover {
+      background: #33312e;
+      border-color: #58554f;
+    }
+    .demo-btn.primary {
+      background: var(--terracotta);
+      border-color: rgba(217, 119, 87, 0.4);
+      color: #ffffff;
+    }
+    .demo-btn.primary:hover {
+      background: var(--terracotta-hover);
+    }
+    .coffee-link-btn {
+      margin-left: auto;
+      background: #ffdd00;
+      color: #181816;
+      border: 1px solid rgba(0,0,0,0.15);
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .coffee-link-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 221, 0, 0.35);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <div class="header">
+      <h1>🎓 QuizAssist Mock Assessment</h1>
+      <p>Benchmark test page for Auto-Solve, Manual Solving, Shortcuts, and Step-by-Step Explanations</p>
+    </div>
+
+    <div class="banner">
+      <strong>⚡ QuizAssist Execution Modes:</strong>
+      <ul style="margin: 8px 0 0 0; padding-left: 20px;">
+        <li><strong>Manual Solve (Button):</strong> Click the <span class="badge">⚡ Solve</span> button in the bottom-right dock.</li>
+        <li><strong>Manual Solve (Shortcut):</strong> Press <span class="badge">Alt + S</span> anywhere on the page to solve instantly without clicking.</li>
+        <li><strong>Toggle Auto-Solve Mode:</strong> Click the dock's <span class="badge">⚪ Manual / 🟢 Auto</span> pill or press <span class="badge">Alt + A</span>.</li>
+        <li><strong>Auto-Solve on Page Load:</strong> When Auto mode is active, reloading automatically detects and solves questions.</li>
+        <li><strong>Auto-Click / Select:</strong> In <span class="badge">⚙️ Settings</span> → <em>Modes & Triggers</em>, check <em>Auto-Click / Select Answer</em> to physically select choices.</li>
+        <li><strong>Stealth / Panic Toggle:</strong> Press <span class="badge">Alt + H</span> to instantly hide or reveal all highlights and the floating dock.</li>
+      </ul>
+    </div>
+
+    <div class="action-bar">
+      <button class="demo-btn primary" id="btn-add-dynamic-q">➕ Add Next Question (SPA Test)</button>
+      <button class="demo-btn" id="btn-reset-quiz">🔄 Reset Test State</button>
+      <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="coffee-link-btn">☕ Buy me a coffee</a>
+    </div>
+
+    <div id="questions-wrapper">
+      <!-- Question 1: Science & Logic -->
+      <div class="question-card">
+        <div class="question-title">1. Which of the following organelles is responsible for cellular respiration and ATP generation in eukaryotic cells?</div>
+        <div class="options-list">
+          <label class="choice-item">
+            <input type="radio" name="q1" value="A">
+            <span class="choice-text">Ribosome</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q1" value="B">
+            <span class="choice-text">Endoplasmic Reticulum</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q1" value="C">
+            <span class="choice-text">Mitochondria</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q1" value="D">
+            <span class="choice-text">Golgi Apparatus</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 2: Computer Science -->
+      <div class="question-card">
+        <div class="question-title">2. In JavaScript, what will be logged to the console by the following code snippet?</div>
+        <div class="code-block">console.log(typeof NaN);</div>
+        <div class="options-list">
+          <label class="choice-item">
+            <input type="radio" name="q2" value="A">
+            <span class="choice-text">"undefined"</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q2" value="B">
+            <span class="choice-text">"number"</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q2" value="C">
+            <span class="choice-text">"NaN"</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q2" value="D">
+            <span class="choice-text">"object"</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Question 3: History & Geography -->
+      <div class="question-card">
+        <div class="question-title">3. What is the longest river in the world by overall length?</div>
+        <div class="options-list">
+          <label class="choice-item">
+            <input type="radio" name="q3" value="A">
+            <span class="choice-text">Amazon River</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q3" value="B">
+            <span class="choice-text">Nile River</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q3" value="C">
+            <span class="choice-text">Yangtze River</span>
+          </label>
+          <label class="choice-item">
+            <input type="radio" name="q3" value="D">
+            <span class="choice-text">Mississippi River</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let dynamicCount = 3;
+    const dynamicQuestions = [
+      {
+        title: "What is the time complexity of searching an element in a balanced Binary Search Tree (BST)?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"]
+      },
+      {
+        title: "Which chemical element has the atomic number 1 and is the most abundant chemical substance in the Universe?",
+        options: ["Oxygen", "Carbon", "Helium", "Hydrogen"]
+      },
+      {
+        title: "Which HTTP status code corresponds to 'Unauthorized' access?",
+        options: ["200", "401", "403", "404"]
+      }
+    ];
+
+    document.getElementById('btn-add-dynamic-q').addEventListener('click', () => {
+      const qIndex = (dynamicCount - 3) % dynamicQuestions.length;
+      const data = dynamicQuestions[qIndex];
+      dynamicCount++;
+
+      const wrapper = document.getElementById('questions-wrapper');
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.innerHTML = `
+        <div class="question-title">${dynamicCount}. ${data.title}</div>
+        <div class="options-list">
+          ${data.options.map((opt, i) => `
+            <label class="choice-item">
+              <input type="radio" name="q${dynamicCount}" value="${String.fromCharCode(65 + i)}">
+              <span class="choice-text">${opt}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+      wrapper.appendChild(card);
+    });
+
+    document.getElementById('btn-reset-quiz').addEventListener('click', () => {
+      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      document.querySelectorAll('.question-card').forEach(c => {
+        c.removeAttribute('data-qa-solved');
+        delete c.dataset.qaSolved;
+      });
+      document.querySelectorAll('.qa-explain-trigger').forEach(b => b.remove());
+      document.querySelectorAll('.choice-item').forEach(el => {
+        el.style.backgroundColor = '';
+        el.style.outline = '';
+        el.style.borderBottom = '';
+        el.style.boxShadow = '';
+      });
+    });
+  </script>
+
+</body>
+</html>
