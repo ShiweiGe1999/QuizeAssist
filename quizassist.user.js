@@ -1,4 +1,4 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name         QuizAssist - AI Quiz Solver & Explainer
 // @namespace    https://github.com/ShiweiGe1999/QuizeAssist
 // @version      2.4.2
@@ -463,7 +463,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
     static async callClaude(config, question, options) {
       const apiKey = config.claudeApiKey?.trim();
-      if (!apiKey) throw new Error('Claude API key is not configured. Open QuizAssist Settings (⚙️).');
+      if (!apiKey) throw new Error('Claude API key is not configured. Open QuizAssist Settings (\u2699\uFE0F).');
       const model = config.claudeModel?.trim() || 'claude-opus-5-5';
       const url = 'https://api.anthropic.com/v1/messages';
 
@@ -601,7 +601,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
     static async callCustom(config, question, options) {
       const endpoint = config.customEndpoint?.trim();
-      if (!endpoint) throw new Error('Custom endpoint URL is not configured. Open QuizAssist Settings (⚙️).');
+      if (!endpoint) throw new Error('Custom endpoint URL is not configured. Open QuizAssist Settings (\u2699\uFE0F).');
       const model = config.customModel?.trim() || 'meta-llama/llama-3.1-70b-instruct';
       const apiKey = config.customApiKey?.trim() || '';
 
@@ -847,7 +847,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
       hud.id = 'quizassist-picker-hud';
       hud.innerHTML = `
         <div class="qa-hud-content" style="background: rgba(30, 30, 29, 0.96); border: 1px solid rgba(217, 119, 87, 0.4); border-radius: 16px; padding: 16px 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); color: #fbfaf8;">
-          <div class="qa-hud-badge" style="font-family: 'Charter', Georgia, serif; font-size: 13px; color: #d97757; font-weight: 700; margin-bottom: 6px;">🎯 Selector Picker</div>
+          <div class="qa-hud-badge" style="font-family: 'Charter', Georgia, serif; font-size: 13px; color: #d97757; font-weight: 700; margin-bottom: 6px;">\uD83C\uDFAF Selector Picker</div>
           <div class="qa-hud-title" id="qa-hud-title" style="font-size: 15px; font-weight: 600; color: #fbfaf8; margin-bottom: 4px;">${this.steps[0].title}</div>
           <div class="qa-hud-hint" id="qa-hud-hint" style="font-size: 12px; color: #b5b0a6; margin-bottom: 12px;">${this.steps[0].hint}</div>
           <div class="qa-hud-actions" style="display: flex; gap: 8px;">
@@ -1065,7 +1065,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
       const btn = document.createElement('button');
       btn.className = 'qa-explain-trigger';
       const confScore = aiResult.confidence ? `${aiResult.confidence}%` : 'QuizAssist';
-      btn.innerHTML = `<span>💡 Explain</span><span class="qa-badge" style="background: rgba(0,0,0,0.25); padding: 1px 6px; border-radius: 10px; font-size: 11px;">${confScore}</span>`;
+      btn.innerHTML = `<span>\uD83D\uDCA1 Explain</span><span class="qa-badge" style="background: rgba(0,0,0,0.25); padding: 1px 6px; border-radius: 10px; font-size: 11px;">${confScore}</span>`;
       btn.title = 'Click to open QuizAssist solution and explanation breakdown';
 
       Object.assign(btn.style, {
@@ -1607,17 +1607,17 @@ You MUST respond strictly with a valid JSON object in the following format with 
       dock.id = 'qa-floating-dock';
 
       dock.innerHTML = `
-        <div class="qa-dock-drag-handle" id="qa-dock-drag" title="Drag to reposition dock (Double-click to toggle collapse)">â‹®â‹®</div>
+        <div class="qa-dock-drag-handle" id="qa-dock-drag" title="Drag to reposition dock (Double-click to toggle collapse)">\u22EE\u22EE</div>
         <div class="qa-dock-status ${isAllowed ? '' : 'inactive'}" id="qa-dock-status" title="${isAllowed ? 'QuizAssist Active on this domain' : 'QuizAssist Disabled on this domain'}"></div>
         <div class="qa-dock-content" id="qa-dock-content">
-          <button class="qa-dock-btn primary" id="qa-btn-solve" title="Manual Solve (${config.solveShortcut || 'Alt+S'})">âš¡ Solve</button>
-          <button class="qa-dock-btn qa-dock-btn-auto ${config.autoSolveOnLoad ? 'active' : ''}" id="qa-btn-toggle-auto" title="Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})">${config.autoSolveOnLoad ? 'ðŸŸ¢ Auto' : 'âšª Manual'}</button>
-          <button class="qa-dock-btn" id="qa-btn-picker" title="Visual Selector Picker">ðŸŽ¯ Pick</button>
-          <button class="qa-dock-btn" id="qa-btn-settings" title="Settings">âš™ï¸</button>
-          <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-dock-btn qa-dock-coffee-btn" title="Buy me a coffee â˜•">â˜•</a>
+          <button class="qa-dock-btn primary" id="qa-btn-solve" title="Manual Solve (${config.solveShortcut || 'Alt+S'})">\u26A1 Solve</button>
+          <button class="qa-dock-btn qa-dock-btn-auto ${config.autoSolveOnLoad ? 'active' : ''}" id="qa-btn-toggle-auto" title="Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})">${config.autoSolveOnLoad ? '\uD83D\uDFE2 Auto' : '\u26AA Manual'}</button>
+          <button class="qa-dock-btn" id="qa-btn-picker" title="Visual Selector Picker">\uD83C\uDFAF Pick</button>
+          <button class="qa-dock-btn" id="qa-btn-settings" title="Settings">\u2699\uFE0F</button>
+          <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-dock-btn qa-dock-coffee-btn" title="Buy me a coffee \u2615">\u2615</a>
         </div>
-        <button class="qa-dock-btn qa-dock-btn-collapse" id="qa-btn-collapse" title="Collapse / Minimize dock">âˆ’</button>
-        <button class="qa-dock-btn qa-dock-btn-expand" id="qa-btn-expand" title="Click to expand QuizAssist dock" style="display: none;">âš¡ QA</button>
+        <button class="qa-dock-btn qa-dock-btn-collapse" id="qa-btn-collapse" title="Collapse / Minimize dock">\u2212</button>
+        <button class="qa-dock-btn qa-dock-btn-expand" id="qa-btn-expand" title="Click to expand QuizAssist dock" style="display: none;">\u26A1 QA</button>
       `;
 
       this.shadowRoot.appendChild(dock);
@@ -1863,11 +1863,11 @@ You MUST respond strictly with a valid JSON object in the following format with 
       if (autoBtn) {
         if (config.autoSolveOnLoad) {
           autoBtn.className = 'qa-dock-btn qa-dock-btn-auto active';
-          autoBtn.innerHTML = '🟢 Auto';
+          autoBtn.innerHTML = '\uD83D\uDFE2 Auto';
           autoBtn.title = `Auto-Solve Active (${config.toggleAutoShortcut || 'Alt+A'} to switch to manual)`;
         } else {
           autoBtn.className = 'qa-dock-btn qa-dock-btn-auto';
-          autoBtn.innerHTML = '⚪ Manual';
+          autoBtn.innerHTML = '\u26AA Manual';
           autoBtn.title = `Manual Mode Active (${config.toggleAutoShortcut || 'Alt+A'} to enable auto-solve)`;
         }
       }
@@ -1882,11 +1882,11 @@ You MUST respond strictly with a valid JSON object in the following format with 
       this.updateAutoSolveButton();
 
       if (newState) {
-        this.showToast('Auto-Solve Mode: ON 🟢', 'success');
+        this.showToast('Auto-Solve Mode: ON \uD83D\uDFE2', 'success');
         this.startAutoSolveObserver();
         this.handleSolveClick({ isAuto: true, silent: false });
       } else {
-        this.showToast('Auto-Solve Mode: OFF (Manual Mode) ⚪', 'info');
+        this.showToast('Auto-Solve Mode: OFF (Manual Mode) \u26AA', 'info');
         this.stopAutoSolveObserver();
       }
     }
@@ -1894,7 +1894,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
     static showToast(message, type = 'info') {
       const toast = document.createElement('div');
       toast.className = 'qa-toast';
-      const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+      const icon = type === 'success' ? '\u2705' : type === 'error' ? '\u274C' : '\u2139\uFE0F';
       toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
       this.shadowRoot.appendChild(toast);
       setTimeout(() => {
@@ -1963,13 +1963,13 @@ You MUST respond strictly with a valid JSON object in the following format with 
       this.isSolving = false;
       if (solveBtn) {
         solveBtn.disabled = false;
-        solveBtn.innerText = '⚡ Solve';
+        solveBtn.innerText = '\u26A1 Solve';
       }
 
       if (errorCount > 0 && solvedCount === 0) {
         if (!silent) this.showToast('Failed to solve questions. Please check your API key & provider settings.', 'error');
       } else if (solvedCount > 0) {
-        const msg = isAuto ? `⚡ Auto-solved ${solvedCount} question(s)!` : `Highlighted ${solvedCount} question(s)!`;
+        const msg = isAuto ? `\u26A1 Auto-solved ${solvedCount} question(s)!` : `Highlighted ${solvedCount} question(s)!`;
         this.showToast(msg, 'success');
       }
     }
@@ -2094,14 +2094,14 @@ You MUST respond strictly with a valid JSON object in the following format with 
         <div class="qa-modal-card">
           <div class="qa-modal-header">
             <div class="qa-modal-title">
-              <span>💡 QuizAssist Solution & Explanation</span>
+              <span>\uD83D\uDCA1 QuizAssist Solution & Explanation</span>
               <span id="qa-explain-conf-badge" class="qa-conf-badge">98% Confidence</span>
             </div>
             <button class="qa-close-btn" id="qa-explain-close">&times;</button>
           </div>
           <div class="qa-modal-body" id="qa-explain-body"></div>
           <div class="qa-modal-footer">
-            <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-btn qa-btn-coffee" style="margin-right: auto;">☕ Buy me a coffee</a>
+            <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-btn qa-btn-coffee" style="margin-right: auto;">\u2615 Buy me a coffee</a>
             <button class="qa-btn qa-btn-secondary" id="qa-explain-dismiss">Close</button>
           </div>
         </div>
@@ -2156,7 +2156,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
         <div style="font-family: 'Charter', 'Iowan Old Style', Georgia, serif; font-size: 16px; font-weight: 600; margin-bottom: 18px; color: #fbfaf8; line-height: 1.5;">${qData.questionText}</div>
         
         <div class="qa-box-correct">
-          <div class="qa-label" style="color: #5bb98c; font-family: 'Charter', Georgia, serif; font-size: 13px;">✅ Correct Answer:</div>
+          <div class="qa-label" style="color: #5bb98c; font-family: 'Charter', Georgia, serif; font-size: 13px;">\u2705 Correct Answer:</div>
           <div style="font-size: 14.5px; color: #ecfdf5; margin-top: 4px;">${correctTexts || 'See highlighted choice'}</div>
         </div>
 
@@ -2182,14 +2182,14 @@ You MUST respond strictly with a valid JSON object in the following format with 
       modal.innerHTML = `
         <div class="qa-modal-card" style="max-width: 660px;">
           <div class="qa-modal-header">
-            <div class="qa-modal-title">⚙️ QuizAssist Configuration</div>
+            <div class="qa-modal-title">\u2699\uFE0F QuizAssist Configuration</div>
             <button class="qa-close-btn" id="qa-settings-close">&times;</button>
           </div>
           <div class="qa-modal-body">
             <div class="qa-tabs">
-              <button class="qa-tab-btn active" data-tab="tab-provider">🤖 AI Providers</button>
-              <button class="qa-tab-btn" data-tab="tab-selectors">🎯 Selectors & Site</button>
-              <button class="qa-tab-btn" data-tab="tab-general">⚡ Modes & Triggers</button>
+              <button class="qa-tab-btn active" data-tab="tab-provider">\uD83E\uDD16 AI Providers</button>
+              <button class="qa-tab-btn" data-tab="tab-selectors">\uD83C\uDFAF Selectors & Site</button>
+              <button class="qa-tab-btn" data-tab="tab-general">\u26A1 Modes & Triggers</button>
             </div>
 
             <!-- Tab 1: AI Providers -->
@@ -2272,7 +2272,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
               </div>
 
               <div class="qa-form-group" style="margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
-                <button class="qa-btn qa-btn-secondary" id="cfg-test-connection">🔌 Test AI Connection</button>
+                <button class="qa-btn qa-btn-secondary" id="cfg-test-connection">\uD83D\uDD0C Test AI Connection</button>
                 <span id="cfg-test-result" style="font-size: 12px; margin-left: 10px; font-weight: 500;"></span>
               </div>
             </div>
@@ -2282,7 +2282,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
               <div class="qa-form-group">
                 <label class="qa-label">Current Domain Profile</label>
                 <div style="font-size: 13px; color: #d97757; margin-bottom: 8px;"><code>${window.location.hostname}</code></div>
-                <button class="qa-btn qa-btn-primary" id="cfg-launch-picker" style="width: 100%; margin-bottom: 12px;">🎯 Launch Visual Selector Picker</button>
+                <button class="qa-btn qa-btn-primary" id="cfg-launch-picker" style="width: 100%; margin-bottom: 12px;">\uD83C\uDFAF Launch Visual Selector Picker</button>
               </div>
 
               <div class="qa-form-group">
@@ -2310,12 +2310,12 @@ You MUST respond strictly with a valid JSON object in the following format with 
             <div class="qa-tab-pane" id="tab-general">
               <label class="qa-checkbox-row">
                 <input type="checkbox" id="cfg-auto-solve" />
-                <span><strong>🤖 Auto-Solve Mode:</strong> Automatically solve questions on page load and dynamic quiz navigation</span>
+                <span><strong>\uD83E\uDD16 Auto-Solve Mode:</strong> Automatically solve questions on page load and dynamic quiz navigation</span>
               </label>
 
               <label class="qa-checkbox-row" style="margin-left: 20px;">
                 <input type="checkbox" id="cfg-auto-click" />
-                <span><strong>⚡ Auto-Click / Select Answer:</strong> Automatically select/check the correct radio button or choice</span>
+                <span><strong>\u26A1 Auto-Click / Select Answer:</strong> Automatically select/check the correct radio button or choice</span>
               </label>
 
               <div class="qa-form-group" style="margin-left: 24px; margin-bottom: 14px;">
@@ -2325,7 +2325,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
               </div>
 
               <div class="qa-form-group" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
-                <label class="qa-label">⌨️ Keyboard Shortcuts</label>
+                <label class="qa-label">\u2328\uFE0F Keyboard Shortcuts</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
                   <div>
                     <span style="font-size: 12px; color: #a8a29e; display: block; margin-bottom: 4px;">Manual Solve</span>
@@ -2374,7 +2374,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
               <!-- Dock Position & Reset -->
               <div class="qa-form-group" style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
-                <label class="qa-label">ðŸ“ Floating Dock Position</label>
+                <label class="qa-label">\uD83D\uDCCD Floating Dock Position</label>
                 <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 8px;">
                   <span style="font-size: 13px; color: #a8a29e;">Drag using the <strong>&#8942;&#8942;</strong> handle to move anywhere on screen.</span>
                   <button class="qa-btn qa-btn-secondary" id="cfg-reset-dock-pos">Reset Position</button>
@@ -2389,13 +2389,13 @@ You MUST respond strictly with a valid JSON object in the following format with 
                     <span style="font-size: 13.5px; color: #fbfaf8; font-weight: 600;">QuizAssist v${SCRIPT_VERSION}</span>
                     <span id="cfg-update-status" style="display: block; font-size: 12px; color: #a8a29e; margin-top: 2px;">Automatic Tampermonkey background updates active</span>
                   </div>
-                  <button class="qa-btn qa-btn-secondary" id="cfg-check-update">🔄 Check for Updates</button>
+                  <button class="qa-btn qa-btn-secondary" id="cfg-check-update">\uD83D\uDD04 Check for Updates</button>
                 </div>
               </div>
             </div>
           </div>
           <div class="qa-modal-footer">
-            <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-btn qa-btn-coffee" style="margin-right: auto;">☕ Buy me a coffee</a>
+            <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-btn qa-btn-coffee" style="margin-right: auto;">\u2615 Buy me a coffee</a>
             <button class="qa-btn qa-btn-secondary" id="qa-settings-cancel">Cancel</button>
             <button class="qa-btn qa-btn-primary" id="qa-settings-save">Save Settings</button>
           </div>
@@ -2541,13 +2541,13 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
         const res = await UpdateManager.checkForUpdates();
         btn.disabled = false;
-        btn.innerText = '🔄 Check for Updates';
+        btn.innerText = '\uD83D\uDD04 Check for Updates';
 
         if (res.isNewer) {
           statusEl.innerHTML = `<span style="color: #5bb98c; font-weight: 600;">New version v${res.latestVersion} available!</span> <a href="${DOWNLOAD_URL}" target="_blank" style="color: #d97757; font-weight: 700; margin-left: 6px; text-decoration: underline;">Install Update</a>`;
-          this.showToast(`🚀 New QuizAssist update v${res.latestVersion} available!`, 'success');
+          this.showToast(`\uD83D\uDE80 New QuizAssist update v${res.latestVersion} available!`, 'success');
         } else if (res.success) {
-          statusEl.innerHTML = `<span style="color: #5bb98c;">You are on the latest version (v${res.currentVersion}) ✅</span>`;
+          statusEl.innerHTML = `<span style="color: #5bb98c;">You are on the latest version (v${res.currentVersion}) \u2705</span>`;
           this.showToast('QuizAssist is up to date!', 'success');
         } else {
           statusEl.innerHTML = `<span style="color: #a8a29e;">Installed: v${SCRIPT_VERSION} (Unable to reach update server)</span>`;
@@ -2730,25 +2730,25 @@ You MUST respond strictly with a valid JSON object in the following format with 
   function initialize() {
     if (typeof GM_registerMenuCommand !== 'undefined') {
       const config = ConfigManager.get();
-      GM_registerMenuCommand(`⚡ Solve Quiz Questions (${config.solveShortcut || 'Alt+S'})`, () => UIManager.handleSolveClick({ isAuto: false, silent: false }));
-      GM_registerMenuCommand(`🔄 Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})`, () => UIManager.toggleAutoSolveMode());
-      GM_registerMenuCommand(`👁️ Toggle Stealth / Panic Hide (${config.hideShortcut || 'Alt+H'})`, () => UIManager.toggleVisibility());
-      GM_registerMenuCommand('🎯 Visual Selector Picker', () => UIManager.handlePickerClick());
-      GM_registerMenuCommand('⚙️ QuizAssist Settings', () => UIManager.openSettingsModal());
-      GM_registerMenuCommand('🔄 Check for Script Updates', async () => {
+      GM_registerMenuCommand(`\u26A1 Solve Quiz Questions (${config.solveShortcut || 'Alt+S'})`, () => UIManager.handleSolveClick({ isAuto: false, silent: false }));
+      GM_registerMenuCommand(`\uD83D\uDD04 Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})`, () => UIManager.toggleAutoSolveMode());
+      GM_registerMenuCommand(`\uD83D\uDC41\uFE0F Toggle Stealth / Panic Hide (${config.hideShortcut || 'Alt+H'})`, () => UIManager.toggleVisibility());
+      GM_registerMenuCommand('\uD83C\uDFAF Visual Selector Picker', () => UIManager.handlePickerClick());
+      GM_registerMenuCommand('\u2699\uFE0F QuizAssist Settings', () => UIManager.openSettingsModal());
+      GM_registerMenuCommand('\uD83D\uDD04 Check for Script Updates', async () => {
         const res = await UpdateManager.checkForUpdates();
         if (res.isNewer) {
           if (confirm(`A new version of QuizAssist (v${res.latestVersion}) is available!\n\nWould you like to install the update now?`)) {
             window.open(DOWNLOAD_URL, '_blank');
           }
         } else if (res.success) {
-          alert(`QuizAssist is up to date (v${res.currentVersion}) ✅`);
+          alert(`QuizAssist is up to date (v${res.currentVersion}) \u2705`);
         } else {
           alert('Unable to reach the update server. Please check your internet connection.');
         }
       });
-      GM_registerMenuCommand('☕ Buy Me a Coffee', () => window.open('https://buymeacoffee.com/shiweige', '_blank'));
-      GM_registerMenuCommand('🗑️ Clear Response Cache', () => {
+      GM_registerMenuCommand('\u2615 Buy Me a Coffee', () => window.open('https://buymeacoffee.com/shiweige', '_blank'));
+      GM_registerMenuCommand('\uD83D\uDDD1\uFE0F Clear Response Cache', () => {
         const count = CacheManager.clearAll();
         alert(`Cleared ${count} cached quiz items.`);
       });
@@ -2765,7 +2765,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
         setTimeout(async () => {
           const res = await UpdateManager.checkForUpdates();
           if (res.isNewer) {
-            UIManager.showToast(`🚀 QuizAssist v${res.latestVersion} is available! Open Settings to update.`, 'info');
+            UIManager.showToast(`\uD83D\uDE80 QuizAssist v${res.latestVersion} is available! Open Settings to update.`, 'info');
           }
         }, 5000);
       }
