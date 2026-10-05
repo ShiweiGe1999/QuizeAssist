@@ -1,7 +1,7 @@
 ﻿// ==UserScript==
 // @name         QuizAssist - AI Quiz Solver & Explainer
 // @namespace    https://github.com/ShiweiGe1999/QuizeAssist
-// @version      2.4.0
+// @version      2.4.2
 // @description  Intelligent AI Quiz Assistant with Auto-Solve, Keyboard Shortcuts, and Step-by-Step Explanations.
 // @author       QuizAssist Team
 // @match        *://*/*
@@ -27,29 +27,36 @@
    * CONSTANTS, VERSION & LATEST MODEL PRESETS
    * =========================================================================
    */
-  const SCRIPT_VERSION = '2.4.0';
+  const SCRIPT_VERSION = '2.4.2';
   const UPDATE_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
   const DOWNLOAD_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
 
   const MODEL_PRESETS = {
     claude: [
-      { id: 'claude-opus-5-5', name: 'Claude Opus 5.5 (Recommended / Frontier Autonomous Reasoning)' },
+      { id: 'claude-opus-5-5', name: 'Claude Opus 5.5 (Frontier Autonomous Reasoning)' },
+      { id: 'claude-sonnet-5-5', name: 'Claude Sonnet 5.5 (Recommended / Balanced Intelligence)' },
       { id: 'claude-sonnet-5', name: 'Claude Sonnet 5 (Frontier High-Speed Workhorse)' },
+      { id: 'claude-haiku-4-5', name: 'Claude Haiku 4.5 (High-Speed Inference)' },
       { id: 'claude-3-7-sonnet-latest', name: 'Claude 3.7 Sonnet (Hybrid Thinking)' },
-      { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet (Legacy Standard)' }
+      { id: 'claude-3-5-sonnet-latest', name: 'Claude 3.5 Sonnet (Classic Standard)' },
+      { id: 'claude-3-5-haiku-latest', name: 'Claude 3.5 Haiku (Legacy Fast)' }
     ],
     openai: [
-      { id: 'gpt-6.1', name: 'GPT-6.1 (Frontier Unified Deliberation)' },
-      { id: 'gpt-6.1-mini', name: 'GPT-6.1 Mini (High-Speed Frontier Reasoning)' },
-      { id: 'o4-mini', name: 'o4-mini (Proven STEM Reasoning)' },
-      { id: 'o3-mini', name: 'o3-mini (Math & Logic Reasoning)' },
-      { id: 'gpt-4o', name: 'GPT-4o (Classic Multimodal Standard)' }
+      { id: 'gpt-6.1-sol', name: 'GPT-6.1 Sol (Recommended / High-Efficiency Frontier)' },
+      { id: 'gpt-6-astra', name: 'GPT-6 Astra (Frontier Flagship / Deep Deliberation)' },
+      { id: 'gpt-6-luna', name: 'GPT-6 Luna (Lightweight Fast)' },
+      { id: 'o3', name: 'o3 (Frontier Math & Deep Logic Reasoning)' },
+      { id: 'o3-mini', name: 'o3-mini (High-Speed STEM Reasoning)' },
+      { id: 'gpt-4o', name: 'GPT-4o (Classic Multimodal Standard)' },
+      { id: 'gpt-4o-mini', name: 'GPT-4o Mini (Cost-Effective Fast Standard)' }
     ],
     gemini: [
-      { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (Frontier Fast Deliberation)' },
-      { id: 'gemini-3.8-pro', name: 'Gemini 3.8 Pro (Frontier Complex Reasoning & STEM)' },
+      { id: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash (Recommended / Frontier Fast Deliberation)' },
+      { id: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro (Frontier Complex Reasoning & STEM)' },
+      { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite (Ultra-Low Latency & High Throughput)' },
       { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (Proven Fast Workhorse)' },
-      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Deep Multimodal)' }
+      { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Deep Adaptive Reasoning)' },
+      { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (General Multimodal Standard)' }
     ]
   };
 
@@ -60,7 +67,7 @@
     claudeApiKey: '',
     claudeModel: 'claude-opus-5-5',
     openaiApiKey: '',
-    openaiModel: 'gpt-6.1',
+    openaiModel: 'gpt-6.1-sol',
     geminiApiKey: '',
     geminiModel: 'gemini-3.8-flash',
     customApiKey: '',
@@ -143,11 +150,22 @@
         const stored = GM_getValue('quizassist_config', null);
         if (!stored) return { ...DEFAULT_CONFIG };
         const parsed = JSON.parse(stored);
-        return {
+        const config = {
           ...DEFAULT_CONFIG,
           ...parsed,
           domainProfiles: { ...DEFAULT_CONFIG.domainProfiles, ...(parsed.domainProfiles || {}) }
         };
+
+        // Auto-migrate obsolete or invalid model identifiers from previous versions
+        if (config.openaiModel === 'gpt-6.1' || config.openaiModel === 'gpt-6.1-mini') {
+          config.openaiModel = 'gpt-6.1-sol';
+        } else if (config.openaiModel === 'o4-mini') {
+          config.openaiModel = 'o3-mini';
+        }
+        if (config.geminiModel === 'gemini-3.8-pro') {
+          config.geminiModel = 'gemini-3.1-pro';
+        }
+        return config;
       } catch (e) {
         console.error('[QuizAssist] Error reading config:', e);
         return { ...DEFAULT_CONFIG };
@@ -290,13 +308,16 @@
    * =========================================================================
    */
   class AIClient {
-    static async solveQuestion(question, options) {
-      const cached = CacheManager.get(question, options);
-      if (cached) {
-        return { ...cached, isCached: true };
+    static async solveQuestion(question, options, overrideConfig = null, bypassCache = false) {
+      if (!bypassCache) {
+        const cached = CacheManager.get(question, options);
+        if (cached) {
+          return { ...cached, isCached: true };
+        }
       }
 
-      const config = ConfigManager.get();
+      const baseConfig = ConfigManager.get();
+      const config = overrideConfig ? { ...baseConfig, ...overrideConfig } : baseConfig;
       const provider = config.activeProvider;
 
       let rawResult = null;
@@ -319,7 +340,7 @@
 
       const normalizedResult = this.normalizeResult(rawResult, options);
 
-      if (normalizedResult && normalizedResult.correctIndexes && normalizedResult.correctIndexes.length > 0) {
+      if (!bypassCache && normalizedResult && normalizedResult.correctIndexes && normalizedResult.correctIndexes.length > 0) {
         CacheManager.set(question, options, normalizedResult);
       }
 
@@ -474,8 +495,10 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
     static async callOpenAI(config, question, options) {
       const apiKey = config.openaiApiKey?.trim();
-      if (!apiKey) throw new Error('OpenAI API key is not configured. Open QuizAssist Settings (⚙️).');
-      const model = config.openaiModel?.trim() || 'gpt-6.1';
+      if (!apiKey) throw new Error('OpenAI API key is not configured. Please enter your API key.');
+      let model = config.openaiModel?.trim() || 'gpt-6.1-sol';
+      if (model === 'gpt-6.1' || model === 'gpt-6.1-mini') model = 'gpt-6.1-sol';
+      if (model === 'o4-mini') model = 'o3-mini';
       const url = 'https://api.openai.com/v1/chat/completions';
       const prompt = this.buildPrompt(question, options);
 
@@ -511,6 +534,8 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
         if (isReasoning) {
           payload.max_completion_tokens = 3000;
+        } else {
+          payload.max_tokens = 3000;
         }
 
         return payload;
@@ -551,8 +576,9 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
     static async callGemini(config, question, options) {
       const apiKey = config.geminiApiKey?.trim();
-      if (!apiKey) throw new Error('Gemini API key is not configured. Open QuizAssist Settings (⚙️).');
-      const model = config.geminiModel?.trim() || 'gemini-3.8-flash';
+      if (!apiKey) throw new Error('Gemini API key is not configured. Please enter your API key.');
+      let model = (config.geminiModel?.trim() || 'gemini-3.8-flash').replace(/^models\//, '');
+      if (model === 'gemini-3.8-pro') model = 'gemini-3.1-pro';
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
       const prompt = this.buildPrompt(question, options);
@@ -646,10 +672,35 @@ You MUST respond strictly with a valid JSON object in the following format with 
     }
 
     static async testConnection(provider, customSettings = {}) {
-      const config = { ...ConfigManager.get(), ...customSettings, activeProvider: provider };
+      const baseConfig = ConfigManager.get();
+      const config = { ...baseConfig, ...customSettings, activeProvider: provider };
+
+      switch (provider) {
+        case 'claude':
+          if (!config.claudeApiKey?.trim()) {
+            throw new Error('Claude API key is empty. Please enter your API key.');
+          }
+          break;
+        case 'openai':
+          if (!config.openaiApiKey?.trim()) {
+            throw new Error('OpenAI API key is empty. Please enter your API key.');
+          }
+          break;
+        case 'gemini':
+          if (!config.geminiApiKey?.trim()) {
+            throw new Error('Gemini API key is empty. Please enter your API key.');
+          }
+          break;
+        case 'custom':
+          if (!config.customEndpoint?.trim()) {
+            throw new Error('Custom endpoint URL is empty. Please enter the endpoint URL.');
+          }
+          break;
+      }
+
       const testQ = "What is the capital of France?";
       const testOpts = ["Berlin", "Madrid", "Paris", "Rome"];
-      return await this.solveQuestion(testQ, testOpts);
+      return await this.solveQuestion(testQ, testOpts, config, true);
     }
   }
 
@@ -1128,7 +1179,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
         }
 
-        /* QuizAssist Warm Glass Floating Dock */
+                /* QuizAssist Warm Glass Floating Dock */
         .qa-dock {
           position: fixed;
           bottom: 24px;
@@ -1143,7 +1194,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
           padding: 6px 10px;
           box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45), 0 0 1px rgba(217, 119, 87, 0.3);
           z-index: 2147483640;
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          transition: box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
           user-select: none;
         }
         .qa-dock:hover {
@@ -1152,6 +1203,86 @@ You MUST respond strictly with a valid JSON object in the following format with 
         }
         .qa-dock.hidden {
           display: none !important;
+        }
+        .qa-dock.dragging {
+          cursor: grabbing !important;
+          opacity: 0.94;
+          box-shadow: 0 18px 46px rgba(0, 0, 0, 0.7), 0 0 24px rgba(217, 119, 87, 0.4) !important;
+          border-color: rgba(217, 119, 87, 0.6) !important;
+        }
+        .qa-dock-drag-handle {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: grab;
+          color: rgba(255, 255, 255, 0.35);
+          font-size: 14px;
+          padding: 2px 4px;
+          border-radius: 6px;
+          letter-spacing: -1px;
+          transition: all 0.15s ease;
+          user-select: none;
+          touch-action: none;
+        }
+        .qa-dock-drag-handle:hover {
+          color: rgba(255, 255, 255, 0.85);
+          background: rgba(255, 255, 255, 0.08);
+        }
+        .qa-dock.dragging .qa-dock-drag-handle {
+          cursor: grabbing !important;
+          color: #d97757;
+        }
+        .qa-dock-content {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .qa-dock-btn-collapse {
+          padding: 4px 6px;
+          font-size: 14px;
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.4);
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          line-height: 1;
+          margin-left: 2px;
+        }
+        .qa-dock-btn-collapse:hover {
+          background: rgba(255, 255, 255, 0.12);
+          color: #ffffff;
+        }
+        .qa-dock-btn-expand {
+          font-size: 12px;
+          font-weight: 700;
+          color: #d97757;
+          padding: 5px 10px;
+          background: rgba(217, 119, 87, 0.12);
+          border: 1px solid rgba(217, 119, 87, 0.35);
+          border-radius: 16px;
+          cursor: pointer;
+          display: none;
+          align-items: center;
+          gap: 4px;
+          transition: all 0.2s ease;
+        }
+        .qa-dock-btn-expand:hover {
+          background: rgba(217, 119, 87, 0.25);
+          border-color: rgba(217, 119, 87, 0.6);
+          color: #ffffff;
+          transform: scale(1.04);
+        }
+        .qa-dock.collapsed {
+          padding: 5px 8px;
+          gap: 6px;
+          border-radius: 24px;
+        }
+        .qa-dock.collapsed .qa-dock-content,
+        .qa-dock.collapsed .qa-dock-btn-collapse {
+          display: none !important;
+        }
+        .qa-dock.collapsed .qa-dock-btn-expand {
+          display: inline-flex !important;
         }
         .qa-dock-btn {
           display: inline-flex;
@@ -1467,7 +1598,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
       this.shadowRoot.appendChild(style);
     }
 
-    static renderFloatingDock() {
+        static renderFloatingDock() {
       const isAllowed = ConfigManager.isDomainAllowed();
       const config = ConfigManager.get();
 
@@ -1476,12 +1607,17 @@ You MUST respond strictly with a valid JSON object in the following format with 
       dock.id = 'qa-floating-dock';
 
       dock.innerHTML = `
+        <div class="qa-dock-drag-handle" id="qa-dock-drag" title="Drag to reposition dock (Double-click to toggle collapse)">â‹®â‹®</div>
         <div class="qa-dock-status ${isAllowed ? '' : 'inactive'}" id="qa-dock-status" title="${isAllowed ? 'QuizAssist Active on this domain' : 'QuizAssist Disabled on this domain'}"></div>
-        <button class="qa-dock-btn primary" id="qa-btn-solve" title="Manual Solve (${config.solveShortcut || 'Alt+S'})">⚡ Solve</button>
-        <button class="qa-dock-btn qa-dock-btn-auto ${config.autoSolveOnLoad ? 'active' : ''}" id="qa-btn-toggle-auto" title="Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})">${config.autoSolveOnLoad ? '🟢 Auto' : '⚪ Manual'}</button>
-        <button class="qa-dock-btn" id="qa-btn-picker" title="Visual Selector Picker">🎯 Pick</button>
-        <button class="qa-dock-btn" id="qa-btn-settings" title="Settings">⚙️</button>
-        <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-dock-btn qa-dock-coffee-btn" title="Buy me a coffee ☕">☕</a>
+        <div class="qa-dock-content" id="qa-dock-content">
+          <button class="qa-dock-btn primary" id="qa-btn-solve" title="Manual Solve (${config.solveShortcut || 'Alt+S'})">âš¡ Solve</button>
+          <button class="qa-dock-btn qa-dock-btn-auto ${config.autoSolveOnLoad ? 'active' : ''}" id="qa-btn-toggle-auto" title="Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})">${config.autoSolveOnLoad ? 'ðŸŸ¢ Auto' : 'âšª Manual'}</button>
+          <button class="qa-dock-btn" id="qa-btn-picker" title="Visual Selector Picker">ðŸŽ¯ Pick</button>
+          <button class="qa-dock-btn" id="qa-btn-settings" title="Settings">âš™ï¸</button>
+          <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-dock-btn qa-dock-coffee-btn" title="Buy me a coffee â˜•">â˜•</a>
+        </div>
+        <button class="qa-dock-btn qa-dock-btn-collapse" id="qa-btn-collapse" title="Collapse / Minimize dock">âˆ’</button>
+        <button class="qa-dock-btn qa-dock-btn-expand" id="qa-btn-expand" title="Click to expand QuizAssist dock" style="display: none;">âš¡ QA</button>
       `;
 
       this.shadowRoot.appendChild(dock);
@@ -1490,6 +1626,213 @@ You MUST respond strictly with a valid JSON object in the following format with 
       dock.querySelector('#qa-btn-toggle-auto').addEventListener('click', () => this.toggleAutoSolveMode());
       dock.querySelector('#qa-btn-picker').addEventListener('click', () => this.handlePickerClick());
       dock.querySelector('#qa-btn-settings').addEventListener('click', () => this.openSettingsModal());
+
+      this.initDockDraggable(dock);
+      this.initDockCollapse(dock);
+    }
+
+    static initDockDraggable(dock) {
+      const dragHandle = dock.querySelector('#qa-dock-drag');
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialLeft = 0, initialTop = 0;
+      let hasMoved = false;
+
+      const restorePosition = () => {
+        try {
+          const saved = GM_getValue('qa_dock_pos', null);
+          if (saved) {
+            const pos = JSON.parse(saved);
+            const rect = dock.getBoundingClientRect();
+            const w = rect.width || 360;
+            const h = rect.height || 48;
+            const maxLeft = Math.max(8, window.innerWidth - w - 8);
+            const maxTop = Math.max(8, window.innerHeight - h - 8);
+            const left = Math.min(Math.max(8, pos.left), maxLeft);
+            const top = Math.min(Math.max(8, pos.top), maxTop);
+            dock.style.left = `${left}px`;
+            dock.style.top = `${top}px`;
+            dock.style.right = 'auto';
+            dock.style.bottom = 'auto';
+          }
+        } catch (e) {
+          console.warn('[QuizAssist] Error restoring dock position:', e);
+        }
+      };
+
+      restorePosition();
+
+      window.addEventListener('resize', () => {
+        if (dock.style.left && dock.style.left !== 'auto') {
+          const rect = dock.getBoundingClientRect();
+          const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+          const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+          const curLeft = parseFloat(dock.style.left) || rect.left;
+          const curTop = parseFloat(dock.style.top) || rect.top;
+          dock.style.left = `${Math.min(Math.max(8, curLeft), maxLeft)}px`;
+          dock.style.top = `${Math.min(Math.max(8, curTop), maxTop)}px`;
+        }
+      });
+
+      const onPointerDown = (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        isDragging = true;
+        hasMoved = false;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        startX = clientX;
+        startY = clientY;
+
+        const rect = dock.getBoundingClientRect();
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        dock.style.left = `${initialLeft}px`;
+        dock.style.top = `${initialTop}px`;
+        dock.style.right = 'auto';
+        dock.style.bottom = 'auto';
+
+        dock.classList.add('dragging');
+        document.addEventListener('mousemove', onPointerMove, { passive: false });
+        document.addEventListener('mouseup', onPointerUp);
+        document.addEventListener('touchmove', onPointerMove, { passive: false });
+        document.addEventListener('touchend', onPointerUp);
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDragging) return;
+        if (e.cancelable) e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+
+        if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+          hasMoved = true;
+        }
+
+        const rect = dock.getBoundingClientRect();
+        const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+        const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+
+        const newLeft = Math.min(Math.max(8, initialLeft + deltaX), maxLeft);
+        const newTop = Math.min(Math.max(8, initialTop + deltaY), maxTop);
+
+        dock.style.left = `${newLeft}px`;
+        dock.style.top = `${newTop}px`;
+      };
+
+      const onPointerUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        dock.classList.remove('dragging');
+
+        document.removeEventListener('mousemove', onPointerMove);
+        document.removeEventListener('mouseup', onPointerUp);
+        document.removeEventListener('touchmove', onPointerMove);
+        document.removeEventListener('touchend', onPointerUp);
+
+        if (hasMoved) {
+          const rect = dock.getBoundingClientRect();
+          try {
+            GM_setValue('qa_dock_pos', JSON.stringify({ left: rect.left, top: rect.top }));
+          } catch (e) {}
+        }
+      };
+
+      if (dragHandle) {
+        dragHandle.addEventListener('mousedown', onPointerDown);
+        dragHandle.addEventListener('touchstart', onPointerDown, { passive: true });
+      }
+
+      dock.addEventListener('mousedown', (e) => {
+        if (e.target.closest('button, a, input, select, textarea')) return;
+        onPointerDown(e);
+      });
+      dock.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button, a, input, select, textarea')) return;
+        onPointerDown(e);
+      }, { passive: true });
+    }
+
+    static initDockCollapse(dock) {
+      const collapseBtn = dock.querySelector('#qa-btn-collapse');
+      const expandBtn = dock.querySelector('#qa-btn-expand');
+      const dragHandle = dock.querySelector('#qa-dock-drag');
+
+      const isCollapsedSaved = () => {
+        try {
+          return GM_getValue('qa_dock_collapsed', false) === true;
+        } catch (e) {
+          return false;
+        }
+      };
+
+      const setCollapsed = (collapsed, save = true) => {
+        if (collapsed) {
+          dock.classList.add('collapsed');
+        } else {
+          dock.classList.remove('collapsed');
+          const rect = dock.getBoundingClientRect();
+          if (dock.style.left && dock.style.left !== 'auto') {
+            const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+            const curLeft = parseFloat(dock.style.left) || rect.left;
+            if (curLeft > maxLeft) {
+              dock.style.left = `${maxLeft}px`;
+            }
+          }
+        }
+        if (save) {
+          try {
+            GM_setValue('qa_dock_collapsed', collapsed);
+          } catch (e) {}
+        }
+      };
+
+      if (isCollapsedSaved()) {
+        setCollapsed(true, false);
+      }
+
+      if (collapseBtn) {
+        collapseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setCollapsed(true);
+        });
+      }
+
+      if (expandBtn) {
+        expandBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setCollapsed(false);
+        });
+      }
+
+      dock.addEventListener('click', (e) => {
+        if (dock.classList.contains('collapsed') && !e.target.closest('#qa-dock-drag')) {
+          setCollapsed(false);
+        }
+      });
+
+      if (dragHandle) {
+        dragHandle.addEventListener('dblclick', (e) => {
+          e.stopPropagation();
+          setCollapsed(!dock.classList.contains('collapsed'));
+        });
+      }
+    }
+
+    static resetDockPosition() {
+      const dock = this.shadowRoot?.getElementById('qa-floating-dock');
+      if (dock) {
+        dock.style.left = 'auto';
+        dock.style.top = 'auto';
+        dock.style.bottom = '24px';
+        dock.style.right = '24px';
+        try {
+          GM_deleteValue('qa_dock_pos');
+        } catch (e) {}
+        this.showToast('Dock position reset to bottom-right', 'info');
+      }
     }
 
     static toggleVisibility() {
@@ -1854,9 +2197,9 @@ You MUST respond strictly with a valid JSON object in the following format with 
               <div class="qa-form-group">
                 <label class="qa-label">Active Provider</label>
                 <select class="qa-select" id="cfg-active-provider">
-                  <option value="claude">Claude (Claude Opus 5.5, Sonnet 5)</option>
-                  <option value="openai">OpenAI (GPT-6.1, o4-mini, o3-mini)</option>
-                  <option value="gemini">Google Gemini (Gemini 3.8 Flash, 3.8 Pro)</option>
+                  <option value="claude">Claude (Claude Opus 5.5, Sonnet 5.5)</option>
+                  <option value="openai">OpenAI (GPT-6.1 Sol, GPT-6 Astra, o3)</option>
+                  <option value="gemini">Google Gemini (Gemini 3.8 Flash, 3.1 Pro, 2.5 Flash)</option>
                   <option value="custom">Custom / OpenAI-Compatible (Ollama, OpenRouter)</option>
                 </select>
               </div>
@@ -1883,7 +2226,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
                 <div class="qa-form-group">
                   <label class="qa-label">OpenAI API Key</label>
                   <input type="password" class="qa-input" id="cfg-openai-key" placeholder="sk-..." />
-                  <div class="qa-help">Supports GPT-6.1, GPT-6.1-mini, o4-mini, and o3 series.</div>
+                  <div class="qa-help">Supports GPT-6.1 Sol, GPT-6 Astra, o3, o3-mini, and GPT-4o series.</div>
                 </div>
                 <div class="qa-form-group">
                   <label class="qa-label">Model Selection</label>
@@ -1891,7 +2234,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
                     ${MODEL_PRESETS.openai.map(m => `<option value="${m.id}">${m.name}</option>`).join('')}
                     <option value="custom">Custom Model Name...</option>
                   </select>
-                  <input type="text" class="qa-input" id="cfg-openai-model-custom" style="margin-top: 6px; display: none;" placeholder="e.g. gpt-6.1" />
+                  <input type="text" class="qa-input" id="cfg-openai-model-custom" style="margin-top: 6px; display: none;" placeholder="e.g. gpt-6.1-sol" />
                 </div>
               </div>
 
@@ -2021,11 +2364,20 @@ You MUST respond strictly with a valid JSON object in the following format with 
                 <div class="qa-help">Use '*' for all domains, or comma-separated domain patterns.</div>
               </div>
 
-              <div class="qa-form-group">
+                            <div class="qa-form-group">
                 <label class="qa-label">Cache Management</label>
                 <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 8px;">
                   <span id="cfg-cache-count-label" style="font-size: 13px; color: #a8a29e;">0 items cached</span>
                   <button class="qa-btn qa-btn-danger" id="cfg-clear-cache">Clear Cache</button>
+                </div>
+              </div>
+
+              <!-- Dock Position & Reset -->
+              <div class="qa-form-group" style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+                <label class="qa-label">ðŸ“ Floating Dock Position</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 8px;">
+                  <span style="font-size: 13px; color: #a8a29e;">Drag using the <strong>&#8942;&#8942;</strong> handle to move anywhere on screen.</span>
+                  <button class="qa-btn qa-btn-secondary" id="cfg-reset-dock-pos">Reset Position</button>
                 </div>
               </div>
 
@@ -2068,6 +2420,8 @@ You MUST respond strictly with a valid JSON object in the following format with 
         modal.querySelectorAll('.provider-subgroup').forEach(el => el.style.display = 'none');
         const activeSub = modal.querySelector(`#cfg-group-${val}`);
         if (activeSub) activeSub.style.display = 'block';
+        const testRes = modal.querySelector('#cfg-test-result');
+        if (testRes) testRes.innerText = '';
       });
 
       ['claude', 'openai', 'gemini'].forEach(p => {
@@ -2109,35 +2463,65 @@ You MUST respond strictly with a valid JSON object in the following format with 
       });
 
       modal.querySelector('#cfg-test-connection').addEventListener('click', async () => {
+        const btn = modal.querySelector('#cfg-test-connection');
         const testRes = modal.querySelector('#cfg-test-result');
         testRes.innerText = 'Testing connection...';
         testRes.style.color = '#fbbf24';
+        btn.disabled = true;
+        btn.innerText = '\u23F3 Testing...';
 
         const provider = provSelect.value;
         const getModel = (prov) => {
-          const sel = modal.querySelector(`#cfg-${prov}-model-select`).value;
-          return sel === 'custom' ? modal.querySelector(`#cfg-${prov}-model-custom`).value.trim() : sel;
+          const selEl = modal.querySelector(`#cfg-${prov}-model-select`);
+          if (!selEl) return '';
+          const sel = selEl.value;
+          if (sel === 'custom') {
+            const customVal = modal.querySelector(`#cfg-${prov}-model-custom`)?.value?.trim();
+            return customVal || MODEL_PRESETS[prov]?.[0]?.id || '';
+          }
+          return sel;
         };
 
         try {
           const customSettings = {
-            claudeApiKey: modal.querySelector('#cfg-claude-key').value,
+            claudeApiKey: modal.querySelector('#cfg-claude-key')?.value?.trim() || '',
             claudeModel: getModel('claude'),
-            openaiApiKey: modal.querySelector('#cfg-openai-key').value,
+            openaiApiKey: modal.querySelector('#cfg-openai-key')?.value?.trim() || '',
             openaiModel: getModel('openai'),
-            geminiApiKey: modal.querySelector('#cfg-gemini-key').value,
+            geminiApiKey: modal.querySelector('#cfg-gemini-key')?.value?.trim() || '',
             geminiModel: getModel('gemini'),
-            customEndpoint: modal.querySelector('#cfg-custom-endpoint').value,
-            customApiKey: modal.querySelector('#cfg-custom-key').value,
-            customModel: modal.querySelector('#cfg-custom-model').value,
+            customEndpoint: modal.querySelector('#cfg-custom-endpoint')?.value?.trim() || '',
+            customApiKey: modal.querySelector('#cfg-custom-key')?.value?.trim() || '',
+            customModel: modal.querySelector('#cfg-custom-model')?.value?.trim() || '',
           };
+
+          if (provider === 'claude' && !customSettings.claudeApiKey) {
+            throw new Error('Please enter your Claude API key first.');
+          }
+          if (provider === 'openai' && !customSettings.openaiApiKey) {
+            throw new Error('Please enter your OpenAI API key first.');
+          }
+          if (provider === 'gemini' && !customSettings.geminiApiKey) {
+            throw new Error('Please enter your Gemini API key first.');
+          }
+          if (provider === 'custom' && !customSettings.customEndpoint) {
+            throw new Error('Please enter your Custom Endpoint URL first.');
+          }
+
           await AIClient.testConnection(provider, customSettings);
-          testRes.innerText = 'Connected Successfully! ✅';
+          testRes.innerText = 'Connected Successfully! \u2705';
           testRes.style.color = '#5bb98c';
         } catch (err) {
           testRes.innerText = `Error: ${err.message}`;
           testRes.style.color = '#f87171';
+        } finally {
+          btn.disabled = false;
+          btn.innerText = '\uD83D\uDD0C Test AI Connection';
         }
+      });
+
+      modal.querySelector('#cfg-reset-dock-pos')?.addEventListener('click', () => {
+        this.resetDockPosition();
       });
 
       modal.querySelector('#cfg-clear-cache').addEventListener('click', () => {
@@ -2190,6 +2574,8 @@ You MUST respond strictly with a valid JSON object in the following format with 
       const modal = this.shadowRoot.getElementById('qa-settings-modal');
 
       modal.querySelector('#cfg-active-provider').value = config.activeProvider;
+      const testRes = modal.querySelector('#cfg-test-result');
+      if (testRes) testRes.innerText = '';
 
       // Claude setup
       modal.querySelector('#cfg-claude-key').value = config.claudeApiKey || '';
@@ -2207,7 +2593,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
       // OpenAI setup
       modal.querySelector('#cfg-openai-key').value = config.openaiApiKey || '';
-      const oModel = config.openaiModel || 'gpt-6.1';
+      const oModel = config.openaiModel || 'gpt-6.1-sol';
       const oSel = modal.querySelector('#cfg-openai-model-select');
       const oCust = modal.querySelector('#cfg-openai-model-custom');
       if (Array.from(oSel.options).some(o => o.value === oModel)) {
@@ -2284,7 +2670,11 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
       const getModel = (prov) => {
         const sel = modal.querySelector(`#cfg-${prov}-model-select`).value;
-        return sel === 'custom' ? modal.querySelector(`#cfg-${prov}-model-custom`).value.trim() : sel;
+        if (sel === 'custom') {
+          const customVal = modal.querySelector(`#cfg-${prov}-model-custom`).value.trim();
+          return customVal || MODEL_PRESETS[prov]?.[0]?.id || '';
+        }
+        return sel;
       };
 
       const updated = {
