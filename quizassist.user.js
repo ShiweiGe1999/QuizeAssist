@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QuizAssist - AI Quiz Solver & Explainer
 // @namespace    https://github.com/ShiweiGe1999/QuizeAssist
-// @version      2.5.0
+// @version      2.6.0
 // @description  Intelligent AI Quiz Assistant with Auto-Solve, Keyboard Shortcuts, and Step-by-Step Explanations.
 // @author       QuizAssist Team
 // @match        *://*/*
@@ -27,7 +27,7 @@
    * CONSTANTS, VERSION & LATEST MODEL PRESETS
    * =========================================================================
    */
-  const SCRIPT_VERSION = '2.5.0';
+  const SCRIPT_VERSION = '2.6.0';
   const UPDATE_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
   const DOWNLOAD_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
 
