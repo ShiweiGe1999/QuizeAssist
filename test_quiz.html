@@ -272,6 +272,29 @@
           </label>
         </div>
       </div>
+
+      <!-- Question 4: Multi-Select Checkboxes (Select All That Apply) -->
+      <div class="question-card">
+        <div class="question-title">4. Which of the following data structures have an average search time complexity of O(1)? (Select all that apply)</div>
+        <div class="options-list">
+          <label class="choice-item">
+            <input type="checkbox" name="q4" value="A">
+            <span class="choice-text">Hash Table (Hash Map)</span>
+          </label>
+          <label class="choice-item">
+            <input type="checkbox" name="q4" value="B">
+            <span class="choice-text">Binary Search Tree</span>
+          </label>
+          <label class="choice-item">
+            <input type="checkbox" name="q4" value="C">
+            <span class="choice-text">Direct Address Table / Array by Index</span>
+          </label>
+          <label class="choice-item">
+            <input type="checkbox" name="q4" value="D">
+            <span class="choice-text">Singly Linked List</span>
+          </label>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -351,7 +374,7 @@
     });
 
     document.getElementById('btn-reset-quiz').addEventListener('click', () => {
-      document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+      document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(r => r.checked = false);
       document.querySelectorAll('.question-card').forEach(c => {
         c.removeAttribute('data-qa-solved');
         c.removeAttribute('data-qa-solved-text');

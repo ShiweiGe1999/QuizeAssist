@@ -368,9 +368,11 @@ OPTIONS:
 ${formattedOptions}
 
 INSTRUCTIONS:
-1. Identify the 0-indexed integer(s) of the correct answer(s) (e.g. 0 for first option, 1 for second).
+1. Identify the 0-indexed integer(s) of ALL correct answer(s).
+   - For single-choice questions: return a single index (e.g. [0]).
+   - For multi-select questions (e.g. "Select all that apply", multiple checkboxes): return ALL correct indexes in the array (e.g. [0, 2]).
 2. Provide a confidence score between 1 and 100.
-3. Provide a clear, thoughtful explanation of why the selected answer is correct.
+3. Provide a clear, thoughtful explanation of why the selected answer(s) are correct.
 4. For every incorrect option, provide a concise explanation of why it is eliminated/distractor.
 
 You MUST respond strictly with a valid JSON object in the following format with NO trailing commas:
@@ -1041,12 +1043,56 @@ You MUST respond strictly with a valid JSON object in the following format with 
     static explainButtons = [];
     static isHidden = false;
 
+    static setInputElementChecked(input, shouldBeChecked) {
+      if (!input) return;
+      try {
+        const isCheckbox = input.type === 'checkbox';
+        const isRadio = input.type === 'radio';
+
+        if (isCheckbox) {
+          if (shouldBeChecked && !input.checked) {
+            input.click();
+            if (!input.checked) {
+              const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set;
+              if (setter) setter.call(input, true);
+              else input.checked = true;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          } else if (!shouldBeChecked && input.checked) {
+            input.click();
+            if (input.checked) {
+              const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set;
+              if (setter) setter.call(input, false);
+              else input.checked = false;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+        } else if (isRadio) {
+          if (shouldBeChecked && !input.checked) {
+            input.click();
+            if (!input.checked) {
+              const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked')?.set;
+              if (setter) setter.call(input, true);
+              else input.checked = true;
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+              input.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[QuizAssist] Error setting input state:', err);
+      }
+    }
+
     static highlight(qData, aiResult) {
       const config = ConfigManager.get();
       const isStealth = config.stealthMode;
       const { correctIndexes } = aiResult;
 
       if (Array.isArray(correctIndexes)) {
+        // Highlight all correct choices
         correctIndexes.forEach(idx => {
           const optEl = qData.optionElements[idx];
           if (!optEl) return;
@@ -1072,25 +1118,31 @@ You MUST respond strictly with a valid JSON object in the following format with 
           }
 
           optEl.setAttribute('data-qa-highlighted', 'true');
-
-          // Auto-Click / Select Answer choice if enabled
-          if (config.autoClickAnswers) {
-            try {
-              const input = optEl.querySelector('input[type="radio"], input[type="checkbox"]') ||
-                            (optEl.tagName && optEl.tagName.toLowerCase() === 'input' ? optEl : null);
-              if (input) {
-                input.checked = true;
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.click();
-              } else {
-                optEl.click();
-              }
-            } catch (err) {
-              console.warn('[QuizAssist] Error auto-clicking choice:', err);
-            }
-          }
         });
+
+        // Auto-Click / Select Answer choices if enabled (handles multi-checkboxes & radios)
+        if (config.autoClickAnswers && qData.optionElements && qData.optionElements.length > 0) {
+          qData.optionElements.forEach((optEl, idx) => {
+            if (!optEl) return;
+            const shouldBeChecked = correctIndexes.includes(idx);
+            const input = optEl.querySelector('input[type="radio"], input[type="checkbox"]') ||
+                          (optEl.tagName && optEl.tagName.toLowerCase() === 'input' ? optEl : null);
+
+            if (input) {
+              this.setInputElementChecked(input, shouldBeChecked);
+            } else if (shouldBeChecked) {
+              const isAriaChecked = optEl.getAttribute('aria-checked') === 'true';
+              if (!isAriaChecked) {
+                try { optEl.click(); } catch (e) {}
+              }
+            } else if (!shouldBeChecked) {
+              const isAriaChecked = optEl.getAttribute('aria-checked') === 'true';
+              if (isAriaChecked) {
+                try { optEl.click(); } catch (e) {}
+              }
+            }
+          });
+        }
       }
 
       this.attachExplainButton(qData, aiResult);
