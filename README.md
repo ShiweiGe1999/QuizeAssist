@@ -63,9 +63,16 @@
 - [⚡ Direct 1-Click Installation](#-direct-1-click-installation-recommended)
 - [✨ Key Enterprise Features](#-key-enterprise-features)
 - [🚀 Quick Start Guide](#-quick-start-guide)
+- [📖 Universal Quiz Page Field Guide (How to Use on Any Platform)](#-universal-quiz-page-field-guide-how-to-use-on-any-platform)
+  - [Scenario A: Single-Page / All-at-Once Quizzes](#scenario-a-single-page--all-at-once-quizzes-canvas-classic-moodle-google-forms)
+  - [Scenario B: One-Question-at-a-Time Stepper Quizzes with "Next" Button](#scenario-b-one-question-at-a-time-stepper-quizzes-with-next-button-canvas-new-quizzes-blackboard-ultra-react-spas)
+  - [Scenario C: Multi-Select Checkbox Quizzes ("Select All That Apply")](#scenario-c-multi-select-checkbox-quizzes-select-all-that-apply)
+  - [Scenario D: Custom, Proprietary, or Obscure LMS Portals](#scenario-d-custom-proprietary-or-obscure-lms-portals-30-second-pick-calibration)
+- [🏫 Major LMS Platform Compatibility Matrix](#-major-lms-platform-compatibility-matrix)
 - [🎮 Operational Modes & Triggers](#-operational-modes--triggers)
 - [🧠 LLM Orchestration & Supported Models](#-llm-orchestration--supported-models)
 - [🎯 Visual Selector Studio (Any LMS / Custom DOM)](#-visual-selector-studio-any-lms--custom-dom)
+- [💡 Pro Tips for Seamless Exam Practice & Study](#-pro-tips-for-seamless-exam-practice--study)
 - [🏗️ Enterprise Architecture & Security Posture](#️-enterprise-architecture--security-posture)
 - [⌨️ Keyboard Shortcuts Reference](#️-keyboard-shortcuts-reference)
 - [🔄 Automated Updates & Lifecycle Management](#-automated-updates--lifecycle-management)
@@ -106,6 +113,92 @@
 3. Click the **⚙️ (Settings)** icon to open the configuration center.
 4. Choose your preferred AI provider, paste your API key, and click **🔌 Test AI Connection** to verify live communication.
 5. Click **Save Settings**.
+
+---
+
+## 📖 Universal Quiz Page Field Guide (How to Use on Any Platform)
+
+Every online quiz or assessment engine is structured differently. Here is exactly how to configure and operate QuizAssist across each major format:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        WHICH QUIZ FORMAT ARE YOU TAKING?                               │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+
+  [ A. All Questions on 1 Page ]    ──► Press Alt+S or enable 🟢 Auto (Solves entire page)
+  [ B. One-Question-at-a-Time ]     ──► Enable 🟢 Auto + Auto-Click (Solves as you click Next)
+  [ C. Select All That Apply ]      ──► Solves & auto-checks ALL correct checkboxes
+  [ D. Custom / Proprietary Portal] ──► 30-sec 🎯 Pick calibration binds selectors permanently
+```
+
+---
+
+### Scenario A: Single-Page / All-at-Once Quizzes (Canvas Classic, Moodle, Google Forms)
+
+* **What it looks like:** All 10–50 questions are visible on one long, scrollable page.
+* **Recommended Workflow:**
+  1. Open the quiz page.
+  2. **Manual Solving:** Press **`Alt + S`** (or click **`⚡ Solve`** on the dock). QuizAssist analyzes all visible questions, sends parallel requests to your active LLM, and highlights every correct answer in emerald green.
+  3. **Autonomous Solving:** Turn on **`🟢 Auto`** (`Alt + A`). Whenever you open a quiz or refresh the page, QuizAssist automatically solves the entire assessment after the brief configured delay (default: 1.5 seconds).
+  4. Scroll through the questions to review the highlighted options. Click any **`💡 Explain`** button next to a question to see the step-by-step reasoning and distractor breakdown.
+
+---
+
+### Scenario B: One-Question-at-a-Time Stepper Quizzes with "Next" Button (Canvas New Quizzes, Blackboard Ultra, React SPAs)
+
+* **What it looks like:** Only Question 1 is visible on screen. After selecting an answer, you must click a **"Next"**, **"Continue"**, or **`>`** button to load Question 2, Question 3, etc.
+* **The Challenge:** Most userscripts fail on stepper quizzes because the website reuses the same HTML container element in-place rather than reloading the page.
+* **Recommended Workflow (100% Hands-Free Autonomous Mode):**
+  1. On Question 1, toggle QuizAssist to **`🟢 Auto`** mode (`Alt + A` or click the dock toggle).
+  2. *(Optional)* In **⚙️ Settings** → *Modes & Triggers*, check **"Auto-Click / Select Answer"**.
+  3. **Immediate Solve:** Question 1 is solved, highlighted, and physically selected automatically.
+  4. **Click "Next":** Click the quiz's "Next" button to proceed to Question 2.
+  5. **Continuous Auto-Solve:** QuizAssist's dynamic SPA observer instantly detects that the question text changed inside the container, automatically solves Question 2, highlights the answer, and checks the choice. **You never have to click "Solve" again between questions!**
+  6. **Reviewing Previous Questions:** Clicking **"Previous"** recalls previous solutions instantly from local browser cache at **0 token cost**.
+
+---
+
+### Scenario C: Multi-Select Checkbox Quizzes ("Select All That Apply")
+
+* **What it looks like:** Questions with square checkbox inputs (`[ ]`) where multiple answers can be simultaneously correct.
+* **Recommended Workflow:**
+  1. Trigger solve manually (`Alt + S`) or via **`🟢 Auto`** mode.
+  2. **Simultaneous Multi-Answer Detection:** QuizAssist prompts the AI to identify **all** valid answers.
+  3. **Multi-Highlighting:** All correct options are simultaneously highlighted in emerald green.
+  4. **Idempotent Auto-Clicking:**
+     - If *Auto-Click* is active, QuizAssist safely checks every correct checkbox (e.g. Choices A & C).
+     - It automatically **unchecks** any incorrect checkbox that was previously selected.
+     - Native prototype setters ensure React, Vue, and Canvas form state engines correctly register all checked inputs.
+
+---
+
+### Scenario D: Custom, Proprietary, or Obscure LMS Portals (30-Second 🎯 Pick Calibration)
+
+* **What it looks like:** A proprietary internal company portal, obscure school platform, or custom web test where QuizAssist’s automatic heuristics do not detect question cards out of the box.
+* **One-Time 30-Second Setup:**
+  1. Click **`🎯 Pick`** on the floating dock (or **Launch Visual Selector Picker** in Settings).
+  2. The interactive HUD guides you through 3 clicks:
+     - **Click 1 (Container):** Click the outer card/box that wraps the question and all choices.
+     - **Click 2 (Question Prompt):** Click the title or text of the question.
+     - **Click 3 (Answer Option):** Click **any single choice row** (radio button or checkbox item).
+  3. **Saved Automatically:** QuizAssist derives optimized, resilient CSS selectors for that specific domain and saves them permanently in your browser.
+  4. Every question and all future quizzes on that domain will now auto-detect, solve, and auto-click with 100% accuracy!
+
+---
+
+## 🏫 Major LMS Platform Compatibility Matrix
+
+| Platform / Engine | Quiz Style | Detection | Recommended Mode | Auto-Click Support |
+| :--- | :--- | :---: | :--- | :---: |
+| **Canvas LMS (Classic)** | Full Page (All at once) | Auto Heuristics | `🟢 Auto` or `Alt + S` | ✅ Full Native |
+| **Canvas LMS (New Quizzes)** | 1-Question Stepper (SPA) | Auto Heuristics | `🟢 Auto` + Auto-Click | ✅ Full Native |
+| **Blackboard Learn & Ultra** | Paginated or Full Page | Auto Heuristics | `🟢 Auto` or `Alt + S` | ✅ Full Native |
+| **Moodle LMS** | Paginated or Single Page | Auto Heuristics | `🟢 Auto` or `Alt + S` | ✅ Full Native |
+| **Google Forms** | Scrollable Form | Auto Heuristics | `Alt + S` | ✅ Full Native |
+| **Quizlet & Kahoot Web** | Stepper / Flashcard Quiz | Auto Heuristics | `🟢 Auto` | ✅ Full Native |
+| **Qualtrics / SurveyMonkey** | Stepper Form | Auto Heuristics | `🟢 Auto` + Auto-Click | ✅ Full Native |
+| **WebAssign / Pearson** | Mixed Math & Multiple Choice | Auto / 🎯 Pick | `Alt + S` | ✅ Full Native |
+| **Custom / Internal School Portals** | Any Custom HTML | 🎯 Pick (30s setup) | `🟢 Auto` or `Alt + S` | ✅ Full Native |
 
 ---
 
@@ -167,6 +260,18 @@ For proprietary portals, enterprise training systems, or custom platforms:
    - **Step 3:** Click any answer choice element (radio label or container).
    - **Step 4:** Click the inner answer label text (or click *Skip*).
 3. QuizAssist generates optimized, resilient CSS selectors scoped specifically to the current domain and persists them automatically.
+
+---
+
+## 💡 Pro Tips for Seamless Exam Practice & Study
+
+* **Zero-Token Reviewing:** Navigating backwards and forwards between questions uses **0 API tokens**. QuizAssist caches every solved question locally in browser memory (`GM_setValue`), allowing instant recall without making duplicate network requests.
+* **Clear Distractor Breakdown:** Click **`💡 Explain`** next to any solved question to understand *why* each wrong answer was eliminated. This is ideal for active recall and exam preparation.
+* **Keep Viewports Unobstructed:** Click the **`−`** button on the floating dock to collapse it into a minimal **`⚡ QA`** pill. You can double-click the `⋮⋮` handle or click `⚡ QA` to expand at any time.
+* **Panic / Stealth Mode (`Alt + H`):** Pressing `Alt + H` instantly hides the dock and all highlights in 0 milliseconds. Press `Alt + H` again to reveal.
+* **Domain Status Dot:** The small circular indicator on the left of the dock tells you domain status at a glance:
+  - 🟢 **Green:** QuizAssist is active on this website.
+  - ⚪ **Gray / Dimmed:** QuizAssist is disabled for this domain. Click `⚡ Solve` to quickly whitelist the domain.
 
 ---
 
