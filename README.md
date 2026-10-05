@@ -81,6 +81,9 @@ Click the **⚙️** icon on the dock at any time to open the configuration pane
 * **Auto-Solve Delay:** Choose how many seconds to wait after a page loads before auto-solving begins.
 * **Custom Shortcuts:** Customize `Alt + S`, `Alt + A`, or `Alt + H` to your preferred key combinations.
 * **Local Response Cache:** Solved questions are saved locally in your browser. Re-visiting a question consumes **0 API tokens**.
+* **Draggable & Repositionable Dock:** Drag the floating dock anywhere on your screen using the `⋮⋮` handle or empty space. Position persists automatically across reloads.
+* **Collapsible Minimal Dock:** Click `−` to minimize the dock into a sleek `⚡ QA` badge so it never blocks quiz questions or buttons. Click `⚡ QA` or double-click the handle to expand.
+* **Reset Position:** Restore the dock to the default bottom-right corner at any time in Settings (⚙️) → *Modes & Triggers* → *Reset Position*.
 
 ---
 
