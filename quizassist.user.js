@@ -1,12 +1,12 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name         QuizAssist - AI Quiz Solver & Explainer
-// @namespace    https://github.com/quizassist/quizassist
+// @namespace    https://github.com/ShiweiGe1999/QuizeAssist
 // @version      2.4.0
 // @description  Intelligent AI Quiz Assistant with Auto-Solve, Keyboard Shortcuts, and Step-by-Step Explanations.
 // @author       QuizAssist Team
 // @match        *://*/*
-// @updateURL    https://raw.githubusercontent.com/shiweige/QuizAssist/main/quizassist.user.js
-// @downloadURL  https://raw.githubusercontent.com/shiweige/QuizAssist/main/quizassist.user.js
+// @updateURL    https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js
+// @downloadURL  https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -28,8 +28,8 @@
    * =========================================================================
    */
   const SCRIPT_VERSION = '2.4.0';
-  const UPDATE_URL = 'https://raw.githubusercontent.com/shiweige/QuizAssist/main/quizassist.user.js';
-  const DOWNLOAD_URL = 'https://raw.githubusercontent.com/shiweige/QuizAssist/main/quizassist.user.js';
+  const UPDATE_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
+  const DOWNLOAD_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
 
   const MODEL_PRESETS = {
     claude: [

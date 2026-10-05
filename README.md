@@ -99,7 +99,7 @@ QuizAssist includes built-in update tracking so you always have the latest quiz 
 1. **Tampermonkey Automatic Updates:** Tampermonkey checks `@updateURL` automatically in the background (typically every 24 hours). When a new version is released on GitHub, Tampermonkey updates QuizAssist silently without affecting your API keys or saved preferences.
 2. **Instant In-App Check:** Open the **⚙️ Settings** modal from the dock and click **🔄 Check for Updates**, or use the Tampermonkey context menu item **QuizAssist: Check for Updates**.
 3. **One-Click Install Link:** New users or fresh browsers can install directly by clicking:  
-   [`https://raw.githubusercontent.com/shiweige/QuizAssist/main/quizassist.user.js`](https://raw.githubusercontent.com/shiweige/QuizAssist/main/quizassist.user.js)
+   [`https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js`](https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js)
 
 ---
 
