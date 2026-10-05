@@ -196,7 +196,8 @@
     </div>
 
     <div class="action-bar">
-      <button class="demo-btn primary" id="btn-add-dynamic-q">➕ Add Next Question (SPA Test)</button>
+      <button class="demo-btn primary" id="btn-next-step-q">⏭️ Next Question (In-Place SPA Test)</button>
+      <button class="demo-btn" id="btn-add-dynamic-q">➕ Append Question (DOM Test)</button>
       <button class="demo-btn" id="btn-reset-quiz">🔄 Reset Test State</button>
       <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="coffee-link-btn">☕ Buy me a coffee</a>
     </div>
@@ -276,6 +277,41 @@
   </div>
 
   <script>
+    let inPlaceIndex = 0;
+    const inPlaceQuestions = [
+      {
+        title: "In-Place Question: What is the primary function of DNA polymerase III in prokaryotic DNA replication?",
+        options: ["Synthesizing the RNA primer", "Synthesizing leading and lagging strand DNA", "Unwinding the double helix", "Sealing Okazaki fragments"]
+      },
+      {
+        title: "In-Place Question: Which protocol operates at the Transport Layer of the OSI model and provides connectionless communication?",
+        options: ["TCP", "UDP", "HTTP", "IP"]
+      },
+      {
+        title: "In-Place Question: In Big-O notation, what is the average case time complexity of QuickSort?",
+        options: ["O(n)", "O(n log n)", "O(n^2)", "O(log n)"]
+      }
+    ];
+
+    document.getElementById('btn-next-step-q').addEventListener('click', () => {
+      const q = inPlaceQuestions[inPlaceIndex % inPlaceQuestions.length];
+      inPlaceIndex++;
+      const firstCard = document.querySelector('.question-card');
+      if (firstCard) {
+        firstCard.innerHTML = `
+          <div class="question-title">${inPlaceIndex + 3}. ${q.title}</div>
+          <div class="options-list">
+            ${q.options.map((opt, i) => `
+              <label class="choice-item">
+                <input type="radio" name="step_q_${inPlaceIndex}" value="${String.fromCharCode(65 + i)}">
+                <span class="choice-text">${opt}</span>
+              </label>
+            `).join('')}
+          </div>
+        `;
+      }
+    });
+
     let dynamicCount = 3;
     const dynamicQuestions = [
       {
@@ -318,6 +354,7 @@
       document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
       document.querySelectorAll('.question-card').forEach(c => {
         c.removeAttribute('data-qa-solved');
+        c.removeAttribute('data-qa-solved-text');
         delete c.dataset.qaSolved;
       });
       document.querySelectorAll('.qa-explain-trigger').forEach(b => b.remove());
@@ -326,6 +363,7 @@
         el.style.outline = '';
         el.style.borderBottom = '';
         el.style.boxShadow = '';
+        el.removeAttribute('data-qa-highlighted');
       });
     });
   </script>
