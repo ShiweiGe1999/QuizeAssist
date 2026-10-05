@@ -8,6 +8,9 @@
   <a href="https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js">
     <img src="https://img.shields.io/badge/⚡_One--Click_Install-Tampermonkey-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" alt="One-Click Install in Tampermonkey" />
   </a>
+  <a href="https://shiweige1999.github.io/QuizeAssist/" target="_blank">
+    <img src="https://img.shields.io/badge/🎮_Live_Demo_Quiz-Test_Online-6c5ce7?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo Quiz" />
+  </a>
   <a href="https://github.com/ShiweiGe1999/QuizeAssist/releases">
     <img src="https://img.shields.io/badge/Version-2.6.0-3b82f6?style=for-the-badge&logo=github&logoColor=white" alt="Version 2.6.0" />
   </a>
@@ -52,7 +55,7 @@
 
 1. **Click the installation link above.** Tampermonkey will automatically detect the userscript and open the native installation dialog.
 2. Click **"Install"** (or **"Update"**).
-3. Open any quiz portal or test page (e.g. [`test_quiz.html`](test_quiz.html)).
+3. Open any quiz portal or test instantly with our deployed [🎮 Live Interactive Demo Assessment](https://shiweige1999.github.io/QuizeAssist/) (or open local [`test_quiz.html`](test_quiz.html)).
 4. Click the **⚙️ (Settings)** icon on the QuizAssist dock to enter your API credentials or local model endpoint.
 5. You're ready to solve with `Alt + S` or full hands-free `🟢 Auto` mode!
 
@@ -61,6 +64,7 @@
 ## 📋 Table of Contents
 
 - [⚡ Direct 1-Click Installation](#-direct-1-click-installation-recommended)
+- [🎮 Live Interactive Demo Page (Zero Setup)](#-live-interactive-demo-page-zero-setup)
 - [✨ Key Enterprise Features](#-key-enterprise-features)
 - [🚀 Quick Start Guide](#-quick-start-guide)
 - [📖 Universal Quiz Page Field Guide (How to Use on Any Platform)](#-universal-quiz-page-field-guide-how-to-use-on-any-platform)
@@ -108,7 +112,7 @@
 4. Press `Ctrl + S` (`Cmd + S` on macOS) to save and activate.
 
 ### Initial Configuration
-1. Navigate to any supported quiz platform or open the bundled [`test_quiz.html`](test_quiz.html).
+1. Open our deployed [🎮 Live Interactive Demo Page](https://shiweige1999.github.io/QuizeAssist/) (or test on any school quiz platform).
 2. The sleek QuizAssist floating dock will appear in the bottom-right corner.
 3. Click the **⚙️ (Settings)** icon to open the configuration center.
 4. Choose your preferred AI provider, paste your API key, and click **🔌 Test AI Connection** to verify live communication.
