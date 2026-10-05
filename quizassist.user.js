@@ -710,6 +710,37 @@ You MUST respond strictly with a valid JSON object in the following format with 
    * =========================================================================
    */
   class DOMExtractor {
+    static isElementVisible(el) {
+      if (!el) return false;
+      try {
+        const style = window.getComputedStyle(el);
+        if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+          return false;
+        }
+        if (el.closest('[hidden], [aria-hidden="true"], .hidden, .hide, .collapse:not(.show), .tab-pane:not(.active), .carousel-item:not(.active)')) {
+          return false;
+        }
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 && rect.height === 0) {
+          return false;
+        }
+      } catch (e) {}
+      return true;
+    }
+
+    static isQuestionSolved(q) {
+      if (!q || !q.container) return false;
+      const solvedText = q.container.getAttribute('data-qa-solved-text');
+      if (solvedText && q.questionText && solvedText.trim() === q.questionText.trim()) {
+        const hasExplainBtn = !!q.container.querySelector('.qa-explain-trigger');
+        const hasHighlight = !!q.container.querySelector('[data-qa-highlighted="true"]');
+        if (hasExplainBtn || hasHighlight) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     static getQuestions(onlyUnsolved = false) {
       const profile = ConfigManager.getDomainProfile();
       let containers = [];
@@ -726,13 +757,18 @@ You MUST respond strictly with a valid JSON object in the following format with 
         containers = this.detectContainersHeuristically();
       }
 
-      if (onlyUnsolved) {
-        containers = containers.filter(c => c && c.getAttribute('data-qa-solved') !== 'true' && c.dataset?.qaSolved !== 'true');
-      }
+      // Filter containers that are currently visible in the DOM
+      containers = containers.filter(c => this.isElementVisible(c));
 
-      return containers.map((container, index) => {
+      const parsedQuestions = containers.map((container, index) => {
         return this.parseQuestionContainer(container, profile, index);
       }).filter(q => q && q.questionText && q.options.length >= 2);
+
+      if (onlyUnsolved) {
+        return parsedQuestions.filter(q => !this.isQuestionSolved(q));
+      }
+
+      return parsedQuestions;
     }
 
     static parseQuestionContainer(container, profile, index) {
@@ -1035,6 +1071,8 @@ You MUST respond strictly with a valid JSON object in the following format with 
             optEl.style.transition = 'all 0.3s ease';
           }
 
+          optEl.setAttribute('data-qa-highlighted', 'true');
+
           // Auto-Click / Select Answer choice if enabled
           if (config.autoClickAnswers) {
             try {
@@ -1154,6 +1192,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
     static isSolving = false;
     static autoSolveObserver = null;
     static autoSolveDebounceTimer = null;
+    static hasBoundNavigationEvents = false;
 
     static init() {
       if (this.hostElement) return;
@@ -1952,6 +1991,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
           if (q.container) {
             q.container.dataset.qaSolved = 'true';
             q.container.setAttribute('data-qa-solved', 'true');
+            q.container.setAttribute('data-qa-solved-text', q.questionText.trim());
           }
           solvedCount++;
         } catch (err) {
@@ -2029,34 +2069,93 @@ You MUST respond strictly with a valid JSON object in the following format with 
     }
 
     /**
-     * AUTO-SOLVE CONTROLLER & MUTATION OBSERVER
+     * AUTO-SOLVE CONTROLLER & NAVIGATION OBSERVER
      */
+    static scheduleAutoSolveCheck(delay = 400) {
+      const config = ConfigManager.get();
+      if (!config.autoSolveOnLoad || !ConfigManager.isDomainAllowed() || this.isSolving) return;
+
+      if (this.autoSolveDebounceTimer) clearTimeout(this.autoSolveDebounceTimer);
+      this.autoSolveDebounceTimer = setTimeout(() => {
+        const activeConfig = ConfigManager.get();
+        if (activeConfig.autoSolveOnLoad && ConfigManager.isDomainAllowed() && !this.isSolving) {
+          const unsolved = DOMExtractor.getQuestions(true);
+          if (unsolved.length > 0) {
+            this.handleSolveClick({ isAuto: true, silent: true });
+          }
+        }
+      }, delay);
+    }
+
     static startAutoSolveObserver() {
       if (this.autoSolveObserver || !window.MutationObserver) return;
 
       this.autoSolveObserver = new MutationObserver((mutations) => {
-        let hasNewNodes = false;
+        let hasExternalMutation = false;
         for (const m of mutations) {
-          if (m.addedNodes.length > 0) {
-            hasNewNodes = true;
-            break;
+          const target = m.target;
+          if (target && (target.nodeName === 'QUIZ-ASSIST-HOST' || target.id === 'quizassist-root' || target.closest?.('#quizassist-root, quiz-assist-host'))) {
+            continue;
           }
+          hasExternalMutation = true;
+          break;
         }
-        if (!hasNewNodes) return;
+        if (!hasExternalMutation) return;
 
-        if (this.autoSolveDebounceTimer) clearTimeout(this.autoSolveDebounceTimer);
-        this.autoSolveDebounceTimer = setTimeout(() => {
-          const config = ConfigManager.get();
-          if (config.autoSolveOnLoad && ConfigManager.isDomainAllowed() && !this.isSolving) {
-            this.handleSolveClick({ isAuto: true, silent: true });
-          }
-        }, 800);
+        this.scheduleAutoSolveCheck(500);
       });
 
       this.autoSolveObserver.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ['class', 'style', 'hidden', 'aria-hidden', 'aria-selected', 'data-active', 'data-state']
       });
+
+      if (!this.hasBoundNavigationEvents) {
+        this.hasBoundNavigationEvents = true;
+
+        // 1. SPA History & Hash changes
+        window.addEventListener('popstate', () => this.scheduleAutoSolveCheck(400));
+        window.addEventListener('hashchange', () => this.scheduleAutoSolveCheck(400));
+
+        try {
+          const origPush = history.pushState;
+          if (origPush) {
+            history.pushState = function(...args) {
+              const res = origPush.apply(this, args);
+              window.dispatchEvent(new Event('qa-navigation'));
+              return res;
+            };
+          }
+          const origReplace = history.replaceState;
+          if (origReplace) {
+            history.replaceState = function(...args) {
+              const res = origReplace.apply(this, args);
+              window.dispatchEvent(new Event('qa-navigation'));
+              return res;
+            };
+          }
+        } catch (e) {}
+
+        window.addEventListener('qa-navigation', () => this.scheduleAutoSolveCheck(400));
+
+        // 2. Global click interception for "Next" / "Submit" / pagination controls
+        document.addEventListener('click', (e) => {
+          const btn = e.target.closest('button, a, input[type="button"], input[type="submit"], [role="button"], [class*="next" i], [id*="next" i], [class*="pagination" i], [class*="step" i], [class*="nav" i]');
+          if (!btn) return;
+          if (btn.closest('quiz-assist-host') || btn.closest('#quizassist-root')) return;
+
+          const activeConfig = ConfigManager.get();
+          if (!activeConfig.autoSolveOnLoad || !ConfigManager.isDomainAllowed()) return;
+
+          // When user clicks Next, schedule staggered checks for instant and delayed/AJAX transitions
+          this.scheduleAutoSolveCheck(350);
+          setTimeout(() => this.scheduleAutoSolveCheck(50), 900);
+          setTimeout(() => this.scheduleAutoSolveCheck(50), 1700);
+        }, true);
+      }
     }
 
     static stopAutoSolveObserver() {
