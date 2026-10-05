@@ -85,6 +85,21 @@
 
 ---
 
+## 🎮 Live Interactive Demo Page (Zero Setup)
+
+Want to test QuizAssist before using it on real coursework?
+
+We have deployed the interactive benchmark test suite so you can test it immediately in your browser:
+* **Primary Live Demo (GitHub Pages):** 👉 **[https://shiweige1999.github.io/QuizeAssist/](https://shiweige1999.github.io/QuizeAssist/)**
+* **Instant Web Preview (Zero-Config Fallback):** 👉 **[Open via HTMLPreview](https://htmlpreview.github.io/?https://github.com/ShiweiGe1999/QuizeAssist/blob/main/index.html)**
+* **Local Offline File:** You can also open the bundled [test_quiz.html](test_quiz.html) or [index.html](index.html) directly in any browser.
+
+> [!NOTE]
+> **Repository Owner Setup for GitHub Pages:**  
+> If the GitHub Pages action workflow failed or returns 404, navigate to [**Settings → Pages**](https://github.com/ShiweiGe1999/QuizeAssist/settings/pages). Under **Build and deployment > Source**, select **GitHub Actions** (or **Deploy from a branch** selecting main and / (root)). GitHub will publish the site in seconds!
+
+---
+
 ## ✨ Key Enterprise Features
 
 - **Multi-Provider LLM Orchestration:** Seamless integration with **OpenAI** (`gpt-6.1-sol`, `gpt-6-astra`, `o3-mini`, `gpt-4o`), **Anthropic Claude** (`claude-opus-5-5`, `claude-3-7-sonnet-20250219`), **Google Gemini** (`gemini-3.8-flash`, `gemini-2.5-pro`), and **Local / Self-Hosted** endpoints (`Ollama`, `vLLM`, `LM Studio`, `OpenRouter`).
