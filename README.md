@@ -1,126 +1,261 @@
-﻿# 🎓 QuizAssist
-
-A lightweight browser userscript for Tampermonkey that solves online quiz questions, highlights correct answers, auto-selects choices, and gives you clear step-by-step explanations when you want to learn.
+# 🎓 QuizAssist
 
 <p align="center">
+  <strong>Enterprise-Grade AI Quiz Assistant, Study Accelerator & Real-Time Explanation Engine</strong>
+</p>
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js">
+    <img src="https://img.shields.io/badge/⚡_One--Click_Install-Tampermonkey-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" alt="One-Click Install in Tampermonkey" />
+  </a>
+  <a href="https://github.com/ShiweiGe1999/QuizeAssist/releases">
+    <img src="https://img.shields.io/badge/Version-2.4.0-3b82f6?style=for-the-badge&logo=github&logoColor=white" alt="Version 2.4.0" />
+  </a>
   <a href="https://buymeacoffee.com/shiweige" target="_blank">
-    <img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Support%20Creator-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
+    <img src="https://img.shields.io/badge/Support_Project-Buy_Me_a_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
   </a>
 </p>
 
 <p align="center">
-  <img src="assets/actual_ui_hero.png" alt="QuizAssist UI - Dock and Highlighted Answer" width="100%" />
+  <img src="https://img.shields.io/badge/Security-Zero_Telemetry-success?style=flat-square" alt="Zero Telemetry" />
+  <img src="https://img.shields.io/badge/API_Keys-Client--Side_Encrypted-blue?style=flat-square" alt="Client-Side Key Isolation" />
+  <img src="https://img.shields.io/badge/Architecture-Shadow_DOM_v1-orange?style=flat-square" alt="Shadow DOM Isolation" />
+  <img src="https://img.shields.io/badge/Supported_LMS-Canvas_%7C_Blackboard_%7C_Moodle_%7C_Quizlet_%7C_Custom-6c5ce7?style=flat-square" alt="LMS Supported" />
+  <img src="https://img.shields.io/badge/LLM_Providers-OpenAI_%7C_Claude_%7C_Gemini_%7C_Ollama-d63031?style=flat-square" alt="LLMs Supported" />
 </p>
 
 ---
 
-## ⚠️ Educational Purpose & Anti-Plagiarism Disclaimer
-
-> **PLEASE READ CAREFULLY:**  
-> QuizAssist is developed and provided strictly for **educational, study, and research purposes only**.
->
-> * **Self-Study & Homework Verification:** Use QuizAssist as a study companion to test your understanding, check practice problems after attempting them yourself, and learn from detailed distractor explanations.
-> * **Zero Tolerance for Academic Dishonesty:** Do **not** use QuizAssist for cheating, plagiarism, proctored exams, graded assessments, or any situation where unauthorized assistance is prohibited.
-> * **Honor Code & Academic Integrity:** You are solely responsible for following your institution's honor codes, academic honesty guidelines, and platform terms of service. The developers do not endorse or condone any academic misconduct.
+<p align="center">
+  <img src="assets/actual_ui_hero.png" alt="QuizAssist Floating Dock and Live Question Highlight" width="100%" />
+</p>
 
 ---
 
-## 🚀 Quick Start (Under 2 Minutes)
+## ⚡ Direct 1-Click Installation (Recommended)
 
-### 1. Install Tampermonkey
-Make sure you have the free [Tampermonkey extension](https://www.tampermonkey.net/) installed in your browser (Chrome, Edge, Brave, or Firefox).
+> [!TIP]
+> **Prerequisite:** Ensure you have the [Tampermonkey browser extension](https://www.tampermonkey.net/) (Chrome, Edge, Firefox, Brave, Safari, or Opera) installed.
 
-### 2. Add QuizAssist Script
-1. Click the Tampermonkey icon in your browser toolbar → **Create a new script**.
-2. Replace whatever is inside the editor with the code from [`quizassist.user.js`](quizassist.user.js).
-3. Press `Ctrl + S` to save.
+### Click the button below to install or update instantly:
 
-*(Or simply click the direct installation link in the [Automatic Updates](#-automatic-updates) section below).*
+<p align="center">
+  <a href="https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js">
+    <img src="https://img.shields.io/badge/👉_INSTALL_QUIZASSIST_NOW_(v2.4.0)-CLICK_HERE-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" height="48" alt="Install QuizAssist Now" />
+  </a>
+</p>
 
-### 3. Add Your API Key & Start Solving
-1. Open any quiz page (or our benchmark page [`test_quiz.html`](test_quiz.html)).
-2. Look at the bottom-right corner for the floating QuizAssist dock.
-3. Click the **⚙️ (Settings)** icon.
-4. Choose your provider, paste your API key, and click **Save Settings**.
+<p align="center">
+  Direct Installation URL:  
+  <code><a href="https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js">https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js</a></code>
+</p>
+
+1. **Click the installation link above.** Tampermonkey will automatically detect the userscript and open the native installation dialog.
+2. Click **"Install"** (or **"Update"**).
+3. Open any quiz portal or test page (e.g. [`test_quiz.html`](test_quiz.html)).
+4. Click the **⚙️ (Settings)** icon on the QuizAssist dock to enter your API credentials or local model endpoint.
+5. You're ready to solve with `Alt + S` or full hands-free `🟢 Auto` mode!
 
 ---
 
-## ⚡ How to Use It
+## 📋 Table of Contents
 
-QuizAssist works seamlessly whether you want on-demand help or hands-free auto-solving:
+- [⚡ Direct 1-Click Installation](#-direct-1-click-installation-recommended)
+- [✨ Key Enterprise Features](#-key-enterprise-features)
+- [🚀 Quick Start Guide](#-quick-start-guide)
+- [🎮 Operational Modes & Triggers](#-operational-modes--triggers)
+- [🧠 LLM Orchestration & Supported Models](#-llm-orchestration--supported-models)
+- [🎯 Visual Selector Studio (Any LMS / Custom DOM)](#-visual-selector-studio-any-lms--custom-dom)
+- [🏗️ Enterprise Architecture & Security Posture](#️-enterprise-architecture--security-posture)
+- [⌨️ Keyboard Shortcuts Reference](#️-keyboard-shortcuts-reference)
+- [🔄 Automated Updates & Lifecycle Management](#-automated-updates--lifecycle-management)
+- [⚠️ Academic Integrity & Ethical Use Policy](#️-academic-integrity--ethical-use-policy)
+- [☕ Support the Maintainer](#-support-the-maintainer)
 
-| Mode | How to Trigger | What Happens |
+---
+
+## ✨ Key Enterprise Features
+
+- **Multi-Provider LLM Orchestration:** Seamless integration with **OpenAI** (`gpt-6.1-sol`, `gpt-6-astra`, `o3-mini`, `gpt-4o`), **Anthropic Claude** (`claude-opus-5-5`, `claude-3-7-sonnet-20250219`), **Google Gemini** (`gemini-3.8-flash`, `gemini-2.5-pro`), and **Local / Self-Hosted** endpoints (`Ollama`, `vLLM`, `LM Studio`, `OpenRouter`).
+- **Live Connection Diagnostics:** Test provider connectivity, API keys, and custom base URLs directly within the settings dialog before saving configurations.
+- **Zero-Token Client Cache:** Solved quiz items are securely cached in private browser memory. Revisiting previous questions consumes **0 API tokens** with instantaneous recall.
+- **Draggable & Collapsible Floating Dock:** Warm-glass floating dock with drag-and-drop repositioning (`⋮⋮` handle), coordinate persistence across page loads, and a single-click collapse toggle (`−` / `⚡ QA`) to keep quiz viewports unobstructed.
+- **Interactive Visual Selector Studio:** Built-in 4-step interactive DOM picker allowing zero-code setup on custom, proprietary, or corporate Learning Management Systems (LMS).
+- **Stealth & Panic Safeguards:** Global `Alt + H` toggle for immediate hide/reveal, with optional Stealth Mode replacing glowing outlines with subtle dotted indicators.
+- **Step-by-Step Pedagogical Explanations:** Deep reasoning modal with confidence percentages, detailed justification for the correct choice, and distractor-by-distractor elimination logic.
+- **Dynamic Single-Page Application (SPA) Observer:** Real-time DOM mutation monitoring with intelligent debouncing to detect and solve asynchronously loaded question cards.
+
+---
+
+## 🚀 Quick Start Guide
+
+### Option 1: Direct Automatic Install (10 Seconds)
+1. Ensure the [Tampermonkey extension](https://www.tampermonkey.net/) is active in your browser.
+2. Click the [One-Click Installation Link](https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js).
+3. Tampermonkey opens the verification view. Click **Install**.
+
+### Option 2: Manual Installation (Air-Gapped / Custom Environments)
+1. Open your browser's Tampermonkey Dashboard.
+2. Click the **Utilities** tab or the **+** (New Script) button.
+3. Copy the full content of [`quizassist.user.js`](quizassist.user.js) and paste it into the editor.
+4. Press `Ctrl + S` (`Cmd + S` on macOS) to save and activate.
+
+### Initial Configuration
+1. Navigate to any supported quiz platform or open the bundled [`test_quiz.html`](test_quiz.html).
+2. The sleek QuizAssist floating dock will appear in the bottom-right corner.
+3. Click the **⚙️ (Settings)** icon to open the configuration center.
+4. Choose your preferred AI provider, paste your API key, and click **🔌 Test AI Connection** to verify live communication.
+5. Click **Save Settings**.
+
+---
+
+## 🎮 Operational Modes & Triggers
+
+QuizAssist is built for maximum flexibility, supporting on-demand study assistance and fully autonomous solving workflows:
+
+| Trigger / Action | Mechanism | Behavior |
 | :--- | :--- | :--- |
-| **Manual Click** | Click **⚡ Solve** on the dock | Scans the visible questions, identifies the right answer, and highlights it cleanly in green. |
-| **Keyboard Shortcut** | Press **`Alt + S`** | Solves questions anywhere on the page without reaching for your mouse. |
-| **Auto-Solve** | Click **`⚪ Manual`** on the dock (or press **`Alt + A`**) | Switches to **`🟢 Auto`**. Any quiz you open solves automatically. It also monitors single-page apps (SPA) and automatically answers new questions as they load. |
-| **Auto-Click Choice** | Enable in Settings | Automatically checks the radio button or checkbox so you don't have to click it yourself. |
-| **Instant Hide** | Press **`Alt + H`** | Instantly hides the dock and all answer highlights from the screen. Press again to restore. |
+| **Manual Solve** | Click **`⚡ Solve`** or press **`Alt + S`** | Parses visible questions, queries the active LLM, highlights the target answer in emerald green, and injects a step-by-step reasoning badge. |
+| **Auto-Solve Toggle** | Click **`⚪ Manual`** / **`🟢 Auto`** or press **`Alt + A`** | Activates continuous autonomous monitoring. New questions on load or dynamically rendered across SPA steps solve automatically. |
+| **Autonomous Selection** | Enabled in **⚙️ Settings** | Automatically simulates user interaction to select the radio button or checkbox matching the AI's answer. |
+| **Stealth / Panic Hide** | Press **`Alt + H`** | Instantly hides the floating dock and all on-screen highlight cards. Pressing `Alt + H` again instantly restores them. |
+| **Dock Repositioning** | Drag **`⋮⋮`** Handle | Reposition the dock anywhere on screen. Position coordinates are saved persistently in browser storage. |
+| **Dock Collapse / Expand** | Click **`−`** or **`⚡ QA`** | Minimizes the dock into an unobtrusive micro-pill; double-click the drag handle or click the pill to restore the full dock. |
 
 ---
 
-## 💡 Clear Explanations & Distractor Breakdown
+## 🧠 LLM Orchestration & Supported Models
 
-Whenever an answer is highlighted, a **💡 Explain** button appears next to the question. Clicking it opens a clean breakdown showing why that choice is correct and exactly why each other option was eliminated:
+QuizAssist incorporates specialized system prompts engineered to enforce strict JSON schemas across diverse model architectures:
 
-<p align="center">
-  <img src="assets/actual_ui_modal.png" alt="QuizAssist UI - Explanation Card" width="100%" />
-</p>
+### 1. Anthropic Claude
+- **Presets:** `claude-opus-5-5`, `claude-3-7-sonnet-20250219`, `claude-3-5-haiku-20241022`
+- **Protocol:** Anthropic Messages API (`/v1/messages`)
+- **Key Features:** Exceptional reasoning depth, complex STEM problem solving, and comprehensive distractor analysis.
 
----
+### 2. OpenAI
+- **Presets:** `gpt-6.1-sol`, `gpt-6-astra`, `o3-mini`, `gpt-4o`, `gpt-4o-mini`
+- **Protocol:** Chat Completions API (`/v1/chat/completions`) with `json_object` response format enforcement.
+- **Key Features:** High-speed inference with cost-optimized models (`o3-mini`, `gpt-4o-mini`).
 
-## ⚙️ Settings & Customization
+### 3. Google Gemini
+- **Presets:** `gemini-3.8-flash`, `gemini-2.5-pro`, `gemini-2.0-flash`, `gemini-1.5-pro`
+- **Protocol:** Google Generative Language API (`v1beta`) with structured `application/json` response MIME types.
+- **Key Features:** Ultra-low latency, generous rate limits, and multimodal reasoning capabilities.
 
-Click the **⚙️** icon on the dock at any time to open the configuration panel:
-
-<p align="center">
-  <img src="assets/actual_ui_settings.png" alt="QuizAssist UI - Settings Panel" width="100%" />
-</p>
-
-* **AI Provider:** Connect your preferred API or point it to a local endpoint (such as Ollama or LM Studio).
-* **Auto-Solve Delay:** Choose how many seconds to wait after a page loads before auto-solving begins.
-* **Custom Shortcuts:** Customize `Alt + S`, `Alt + A`, or `Alt + H` to your preferred key combinations.
-* **Local Response Cache:** Solved questions are saved locally in your browser. Re-visiting a question consumes **0 API tokens**.
-* **Draggable & Repositionable Dock:** Drag the floating dock anywhere on your screen using the `⋮⋮` handle or empty space. Position persists automatically across reloads.
-* **Collapsible Minimal Dock:** Click `−` to minimize the dock into a sleek `⚡ QA` badge so it never blocks quiz questions or buttons. Click `⚡ QA` or double-click the handle to expand.
-* **Reset Position:** Restore the dock to the default bottom-right corner at any time in Settings (⚙️) → *Modes & Triggers* → *Reset Position*.
+### 4. Custom & Self-Hosted (Air-Gapped Privacy)
+- **Compatibility:** Ollama, LM Studio, vLLM, LocalAI, OpenRouter, Groq, Mistral AI.
+- **Protocol:** Standard OpenAI-compatible `/chat/completions` endpoint.
+- **Configuration:** Set custom base URL (e.g. `http://localhost:11434/v1/chat/completions`) and model name (e.g. `llama3.1:70b`, `deepseek-r1`).
 
 ---
 
-## ⌨️ Shortcuts Reference
+## 🎯 Visual Selector Studio (Any LMS / Custom DOM)
 
-* **`Alt + S`** — Solve questions on screen
-* **`Alt + A`** — Toggle Auto-Solve mode on / off
-* **`Alt + H`** — Panic hide / reveal toggle
+QuizAssist features universal heuristics that automatically detect standard quiz question patterns (Canvas LMS, Blackboard, Moodle, Brightspace, Quizlet, Google Forms, Typeform, WebAssign).
 
----
+For proprietary portals, enterprise training systems, or custom platforms:
 
-## 🔄 Automatic Updates
+```
+[ Click 🎯 Pick ] ──► [ Click Question Card ] ──► [ Click Question Title ] ──► [ Click First Choice ] ──► [ Click Choice Text ] ──► [ Auto-Saved! ]
+```
 
-QuizAssist includes built-in update tracking so you always have the latest quiz detectors and bug fixes:
-
-1. **Tampermonkey Automatic Updates:** Tampermonkey checks `@updateURL` automatically in the background (typically every 24 hours). When a new version is released on GitHub, Tampermonkey updates QuizAssist silently without affecting your API keys or saved preferences.
-2. **Instant In-App Check:** Open the **⚙️ Settings** modal from the dock and click **🔄 Check for Updates**, or use the Tampermonkey context menu item **QuizAssist: Check for Updates**.
-3. **One-Click Install Link:** New users or fresh browsers can install directly by clicking:  
-   [`https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js`](https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js)
-
----
-
-## 🔒 Privacy & Local Storage
-
-* Everything is saved **100% locally in your browser** via Tampermonkey's private storage.
-* Your API keys and cached questions never leave your computer and are never shared or uploaded to third-party telemetry servers.
+1. Click **`🎯 Pick`** on the dock (or **Launch Visual Selector Picker** in Settings).
+2. The **Interactive HUD** will guide you step-by-step:
+   - **Step 1:** Click any container card wrapping a full question.
+   - **Step 2:** Click the question text / prompt.
+   - **Step 3:** Click any answer choice element (radio label or container).
+   - **Step 4:** Click the inner answer label text (or click *Skip*).
+3. QuizAssist generates optimized, resilient CSS selectors scoped specifically to the current domain and persists them automatically.
 
 ---
 
-## ☕ Support QuizAssist
+## 🏗️ Enterprise Architecture & Security Posture
 
-If QuizAssist helped you study more efficiently or saved you time, buying me a coffee is greatly appreciated!
+QuizAssist adheres to strict zero-trust, privacy-first engineering standards:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Target Web Page (Host DOM)                      │
+│                                                                        │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │             #quizassist-root (Shadow DOM v1 Closed)            │   │
+│   │   ┌───────────────────────┐    ┌───────────────────────────┐   │   │
+│   │   │  Warm Glass Dock      │    │  Reasoning & Settings     │   │   │
+│   │   │  (Drag / Collapse)    │    │  Modals                   │   │   │
+│   │   └───────────────────────┘    └───────────────────────────┘   │   │
+│   └────────────────────────────────────────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────────────┘
+                                     │
+                    (GM_xmlhttpRequest Cross-Origin)
+                                     ▼
+        ┌─────────────────────────────────────────────────────────┐
+        │  Direct Secure Transport (HTTPS TLS 1.3)                │
+        │  To: Anthropic / OpenAI / Gemini / Self-Hosted LLM      │
+        │  Payload: Stripped Question Prompt & Choices Only       │
+        └─────────────────────────────────────────────────────────┘
+```
+
+- **Zero Third-Party Telemetry:** QuizAssist contains zero tracking scripts, zero analytics, zero external logging, and zero intermediary proxy servers. Requests travel **directly** from your browser to your configured AI provider via secure HTTPS.
+- **Local Storage Isolation:** All configurations, encrypted API keys, domain profiles, and cache databases are stored strictly in your browser's private Tampermonkey sandbox (`GM_setValue` / `GM_getValue`).
+- **Encapsulated Shadow DOM Styling:** The UI is rendered inside a dedicated Shadow DOM root (`#quizassist-root`), ensuring full isolation from host stylesheets and preventing CSS bleed in either direction.
+- **Domain Whitelisting & Control:** Whitelist specific hostnames (e.g. `canvas.instructure.com`, `mycourses.edu`) or enable global wildcards (`*`) to ensure execution only where explicitly authorized.
+- **Safe 7-Bit ASCII Encoding:** All UI strings and symbols use explicit Unicode escape sequences (`\uXXXX`), guaranteeing flawless rendering regardless of host page encoding (`UTF-8`, `Windows-1252`, `ISO-8859-1`, or `GBK`).
+
+---
+
+## ⌨️ Keyboard Shortcuts Reference
+
+All hotkeys can be customized with single-press key recording in **⚙️ Settings** → **Modes & Triggers**:
+
+| Default Shortcut | Function | Description |
+| :---: | :--- | :--- |
+| **`Alt + S`** | **Manual Solve** | Triggers AI solving for all visible, unsolved questions on the page. |
+| **`Alt + A`** | **Toggle Auto-Solve** | Cycles between Manual mode (`⚪`) and Autonomous Auto-Solve mode (`🟢`). |
+| **`Alt + H`** | **Panic / Stealth Hide** | Instantly hides the floating dock and all answer highlights from view. |
+
+---
+
+## 🔄 Automated Updates & Lifecycle Management
+
+Never miss critical quiz detector updates, new LLM models, or feature enhancements:
+
+1. **Automated Background Sync:** Tampermonkey automatically queries `@updateURL` every 24 hours. When a new release is pushed to GitHub, Tampermonkey updates QuizAssist silently without overwriting your saved keys or custom domain profiles.
+2. **Instant In-App Update Verification:** Open **⚙️ Settings** → **Version & Updates** and click **`🔄 Check for Updates`**. QuizAssist queries GitHub releases in real time and offers instant 1-click upgrade prompts.
+3. **Permanent Direct Install Link:**
+   ```
+   https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js
+   ```
+
+---
+
+## ⚠️ Academic Integrity & Ethical Use Policy
+
+> **IMPORTANT NOTICE:**  
+> QuizAssist is developed and distributed strictly for **educational self-study, homework verification, and pedagogical research purposes**.
+>
+> - **Recommended Use:** Use QuizAssist as a study companion to verify practice problems, check your comprehension after completing exercises independently, and learn from detailed distractor explanations.
+> - **Prohibited Use:** Do **not** use QuizAssist on proctored exams, timed assessments, graded tests, or any academic evaluation where unauthorized aids or external assistants are disallowed.
+> - **User Responsibility:** Users bear sole legal and institutional responsibility for complying with their school or university honor codes, institutional academic honesty policies, and website terms of service. The authors and maintainers do not endorse, facilitate, or condone academic dishonesty.
+
+---
+
+## ☕ Support the Maintainer
+
+QuizAssist is an independent open-source project maintained with ❤️ for students, researchers, and lifelong learners worldwide.
+
+If QuizAssist has accelerated your learning workflow or saved you hours of study time, supporting ongoing development is warmly appreciated:
 
 <p align="center">
   <a href="https://buymeacoffee.com/shiweige" target="_blank">
     <img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-shiweige-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
   </a>
   <br><br>
-  👉 <a href="https://buymeacoffee.com/shiweige"><strong>buymeacoffee.com/shiweige</strong></a>
+  👉 <strong><a href="https://buymeacoffee.com/shiweige">buymeacoffee.com/shiweige</a></strong>
+</p>
+
+---
+
+<p align="center">
+  <sub>QuizAssist • Released under the MIT License • Built with Modern Web Standards & Shadow DOM v1</sub>
 </p>
