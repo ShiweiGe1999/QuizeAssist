@@ -1703,7 +1703,7 @@ You MUST respond strictly with a valid JSON object in the following format with 
         <div class="qa-dock-content" id="qa-dock-content">
           <button class="qa-dock-btn primary" id="qa-btn-solve" title="Manual Solve (${config.solveShortcut || 'Alt+S'})">\u26A1 Solve</button>
           <button class="qa-dock-btn qa-dock-btn-auto ${config.autoSolveOnLoad ? 'active' : ''}" id="qa-btn-toggle-auto" title="Toggle Auto-Solve Mode (${config.toggleAutoShortcut || 'Alt+A'})">${config.autoSolveOnLoad ? '\uD83D\uDFE2 Auto' : '\u26AA Manual'}</button>
-          <button class="qa-dock-btn" id="qa-btn-picker" title="Visual Selector Picker">\uD83C\uDFAF Pick</button>
+          <button class="qa-dock-btn" id="qa-btn-picker" title="\uD83C\uDFAF Pick: Calibrate Selectors (Optional fallback for custom portals)">\uD83C\uDFAF Pick</button>
           <button class="qa-dock-btn" id="qa-btn-settings" title="Settings">\u2699\uFE0F</button>
           <a href="https://buymeacoffee.com/shiweige" target="_blank" rel="noopener noreferrer" class="qa-dock-btn qa-dock-coffee-btn" title="Buy me a coffee \u2615">\u2615</a>
         </div>
