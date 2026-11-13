@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/badge/🎮_Live_Demo_Quiz-Test_Online-6c5ce7?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo Quiz" />
   </a>
   <a href="https://github.com/ShiweiGe1999/QuizeAssist/releases">
-    <img src="https://img.shields.io/badge/Version-2.6.0-3b82f6?style=for-the-badge&logo=github&logoColor=white" alt="Version 2.6.0" />
+    <img src="https://img.shields.io/badge/Version-2.7.0-3b82f6?style=for-the-badge&logo=github&logoColor=white" alt="Version 2.7.0" />
   </a>
   <a href="https://buymeacoffee.com/shiweige" target="_blank">
     <img src="https://img.shields.io/badge/Support_Project-Buy_Me_a_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
@@ -44,7 +44,7 @@
 
 <p align="center">
   <a href="https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js">
-    <img src="https://img.shields.io/badge/👉_INSTALL_QUIZASSIST_NOW_(v2.6.0)-CLICK_HERE-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" height="48" alt="Install QuizAssist Now" />
+    <img src="https://img.shields.io/badge/👉_INSTALL_QUIZASSIST_NOW_(v2.7.0)-CLICK_HERE-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" height="48" alt="Install QuizAssist Now" />
   </a>
 </p>
 
@@ -132,6 +132,16 @@ We have deployed the interactive benchmark test suite so you can test it immedia
 3. Click the **⚙️ (Settings)** icon to open the configuration center.
 4. Choose your preferred AI provider, paste your API key, and click **🔌 Test AI Connection** to verify live communication.
 5. Click **Save Settings**.
+6. **You're all set!** Press **`Alt + S`** (or click **`⚡ Solve`**) on your quiz.  
+   *(Note: You do **not** need to configure selectors or use `🎯 Pick`—QuizAssist automatically detects questions and answers on Canvas, Moodle, Blackboard, Google Forms, and other standard platforms!)*
+
+---
+
+> [!TIP]
+> ### 💡 Do I Need to Use `🎯 Pick`?
+> **Almost certainly NO!** For **95%+ of online quizzes** (Canvas, Blackboard, Moodle, Google Forms, Brightspace, Quizlet, standard web quizzes), QuizAssist detects questions and answers **100% automatically** using smart DOM heuristics.
+> 
+> You only ever need **`🎯 Pick`** if you are testing on an unusual, proprietary corporate or school portal that QuizAssist cannot recognize out of the box. Think of `🎯 Pick` as an optional superpower / emergency escape hatch!
 
 ---
 
@@ -147,7 +157,7 @@ Every online quiz or assessment engine is structured differently. Here is exactl
   [ A. All Questions on 1 Page ]    ──► Press Alt+S or enable 🟢 Auto (Solves entire page)
   [ B. One-Question-at-a-Time ]     ──► Enable 🟢 Auto + Auto-Click (Solves as you click Next)
   [ C. Select All That Apply ]      ──► Solves & auto-checks ALL correct checkboxes
-  [ D. Custom / Proprietary Portal] ──► 30-sec 🎯 Pick calibration binds selectors permanently
+  [ D. Custom / Proprietary Portal] ──► (Optional Fallback) 30-sec 🎯 Pick calibration binds selectors
 ```
 
 ---
@@ -191,7 +201,7 @@ Every online quiz or assessment engine is structured differently. Here is exactl
 
 ---
 
-### Scenario D: Custom, Proprietary, or Obscure LMS Portals (30-Second 🎯 Pick Calibration)
+### Scenario D (Optional Fallback): Custom, Proprietary, or Obscure LMS Portals (30-Second 🎯 Pick Calibration)
 
 * **What it looks like:** A proprietary internal company portal, obscure school platform, or custom web test where QuizAssist’s automatic heuristics do not detect question cards out of the box.
 * **One-Time 30-Second Setup:**
@@ -229,6 +239,7 @@ QuizAssist is built for maximum flexibility, supporting on-demand study assistan
 | :--- | :--- | :--- |
 | **Manual Solve** | Click **`⚡ Solve`** or press **`Alt + S`** | Parses visible questions, queries the active LLM, highlights the target answer in emerald green, and injects a step-by-step reasoning badge. |
 | **Auto-Solve Toggle** | Click **`⚪ Manual`** / **`🟢 Auto`** or press **`Alt + A`** | Activates continuous autonomous monitoring. New questions on load or dynamically rendered across SPA steps solve automatically. |
+| **Visual Selector Picker** | Click **🎯 Pick** | *(Optional fallback)* Visually binds custom question & choice containers on obscure portals. **Not needed** for standard LMS quizzes. |
 | **Autonomous Selection** | Enabled in **⚙️ Settings** | Automatically simulates user interaction to select the radio button or checkbox matching the AI's answer. |
 | **Stealth / Panic Hide** | Press **`Alt + H`** | Instantly hides the floating dock and all on-screen highlight cards. Pressing `Alt + H` again instantly restores them. |
 | **Dock Repositioning** | Drag **`⋮⋮`** Handle | Reposition the dock anywhere on screen. Position coordinates are saved persistently in browser storage. |
@@ -263,6 +274,9 @@ QuizAssist incorporates specialized system prompts engineered to enforce strict 
 ---
 
 ## 🎯 Visual Selector Studio (Any LMS / Custom DOM)
+
+> [!NOTE]
+> **When to use this:** This tool is strictly an **optional escape hatch** for non-standard, internal, or proprietary web platforms. Standard systems (Canvas, Moodle, Blackboard, Google Forms, Brightspace, etc.) work automatically with zero configuration.
 
 QuizAssist features universal heuristics that automatically detect standard quiz question patterns (Canvas LMS, Blackboard, Moodle, Brightspace, Quizlet, Google Forms, Typeform, WebAssign).
 
