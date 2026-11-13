@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         QuizAssist - AI Quiz Solver & Explainer
 // @namespace    https://github.com/ShiweiGe1999/QuizeAssist
-// @version      2.6.0
+// @version      2.7.0
 // @description  Intelligent AI Quiz Assistant with Auto-Solve, Keyboard Shortcuts, and Step-by-Step Explanations.
 // @author       QuizAssist Team
 // @match        *://*/*
@@ -27,7 +27,7 @@
    * CONSTANTS, VERSION & LATEST MODEL PRESETS
    * =========================================================================
    */
-  const SCRIPT_VERSION = '2.6.0';
+  const SCRIPT_VERSION = '2.7.0';
   const UPDATE_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
   const DOWNLOAD_URL = 'https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js';
 
@@ -880,12 +880,23 @@ You MUST respond strictly with a valid JSON object in the following format with 
       this.bindEvents();
     }
 
+    static savedPosition = null;
+
     static createHUD() {
+      const existing = document.getElementById('quizassist-picker-hud');
+      if (existing) existing.remove();
+
       const hud = document.createElement('div');
       hud.id = 'quizassist-picker-hud';
       hud.innerHTML = `
-        <div class="qa-hud-content" style="background: rgba(30, 30, 29, 0.96); border: 1px solid rgba(217, 119, 87, 0.4); border-radius: 16px; padding: 16px 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); color: #fbfaf8;">
-          <div class="qa-hud-badge" style="font-family: 'Charter', Georgia, serif; font-size: 13px; color: #d97757; font-weight: 700; margin-bottom: 6px;">\uD83C\uDFAF Selector Picker</div>
+        <div class="qa-hud-content" style="background: rgba(30, 30, 29, 0.96); border: 1px solid rgba(217, 119, 87, 0.4); border-radius: 16px; padding: 16px 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.5); color: #fbfaf8; user-select: none;">
+          <div class="qa-hud-header" id="qa-hud-drag-handle" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; cursor: move;">
+            <div class="qa-hud-badge" style="font-family: 'Charter', Georgia, serif; font-size: 13px; color: #d97757; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+              <span style="cursor: grab;">⋮⋮</span>
+              <span>\uD83C\uDFAF Selector Picker</span>
+            </div>
+            <span style="font-size: 11px; color: #a8a29e; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Drag to move</span>
+          </div>
           <div class="qa-hud-title" id="qa-hud-title" style="font-size: 15px; font-weight: 600; color: #fbfaf8; margin-bottom: 4px;">${this.steps[0].title}</div>
           <div class="qa-hud-hint" id="qa-hud-hint" style="font-size: 12px; color: #b5b0a6; margin-bottom: 12px;">${this.steps[0].hint}</div>
           <div class="qa-hud-actions" style="display: flex; gap: 8px;">
@@ -897,16 +908,81 @@ You MUST respond strictly with a valid JSON object in the following format with 
 
       Object.assign(hud.style, {
         position: 'fixed',
-        top: '24px',
-        left: '50%',
-        transform: 'translateX(-50%)',
+        top: this.savedPosition ? `${this.savedPosition.top}px` : '24px',
+        left: this.savedPosition ? `${this.savedPosition.left}px` : '50%',
+        transform: this.savedPosition ? 'none' : 'translateX(-50%)',
         zIndex: '2147483647'
       });
 
       document.body.appendChild(hud);
+      this.initDraggable(hud);
 
       hud.querySelector('#qa-hud-cancel').addEventListener('click', () => this.cancel());
       hud.querySelector('#qa-hud-skip').addEventListener('click', () => this.nextStep(null));
+    }
+
+    static initDraggable(hud) {
+      const dragHandle = hud.querySelector('#qa-hud-drag-handle') || hud;
+      let isDragging = false;
+      let startX = 0, startY = 0;
+      let initialLeft = 0, initialTop = 0;
+
+      const onPointerDown = (e) => {
+        if (e.target.tagName === 'BUTTON') return;
+        if (e.button !== undefined && e.button !== 0) return;
+        isDragging = true;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        startX = clientX;
+        startY = clientY;
+
+        const rect = hud.getBoundingClientRect();
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        hud.style.left = `${initialLeft}px`;
+        hud.style.top = `${initialTop}px`;
+        hud.style.transform = 'none';
+        hud.style.right = 'auto';
+        hud.style.bottom = 'auto';
+
+        document.addEventListener('mousemove', onPointerMove, { passive: false });
+        document.addEventListener('mouseup', onPointerUp);
+        document.addEventListener('touchmove', onPointerMove, { passive: false });
+        document.addEventListener('touchend', onPointerUp);
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDragging) return;
+        if (e.cancelable) e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const deltaX = clientX - startX;
+        const deltaY = clientY - startY;
+
+        const rect = hud.getBoundingClientRect();
+        const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+        const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+
+        const newLeft = Math.min(Math.max(8, initialLeft + deltaX), maxLeft);
+        const newTop = Math.min(Math.max(8, initialTop + deltaY), maxTop);
+
+        hud.style.left = `${newLeft}px`;
+        hud.style.top = `${newTop}px`;
+        SelectorPicker.savedPosition = { left: newLeft, top: newTop };
+      };
+
+      const onPointerUp = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        document.removeEventListener('mousemove', onPointerMove);
+        document.removeEventListener('mouseup', onPointerUp);
+        document.removeEventListener('touchmove', onPointerMove);
+        document.removeEventListener('touchend', onPointerUp);
+      };
+
+      dragHandle.addEventListener('mousedown', onPointerDown);
+      dragHandle.addEventListener('touchstart', onPointerDown, { passive: true });
     }
 
     static updateHUD() {
@@ -1027,6 +1103,8 @@ You MUST respond strictly with a valid JSON object in the following format with 
       document.removeEventListener('click', this.onClick, true);
       if (this.currentHoverEl) {
         this.currentHoverEl.style.outline = this.currentHoverEl.__qaOldOutline || '';
+        this.currentHoverEl.style.cursor = '';
+        this.currentHoverEl = null;
       }
       const hud = document.getElementById('quizassist-picker-hud');
       if (hud) hud.remove();

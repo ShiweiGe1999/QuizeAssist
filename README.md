@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/badge/🎮_Live_Demo_Quiz-Test_Online-6c5ce7?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo Quiz" />
   </a>
   <a href="https://github.com/ShiweiGe1999/QuizeAssist/releases">
-    <img src="https://img.shields.io/badge/Version-2.6.0-3b82f6?style=for-the-badge&logo=github&logoColor=white" alt="Version 2.6.0" />
+    <img src="https://img.shields.io/badge/Version-2.7.0-3b82f6?style=for-the-badge&logo=github&logoColor=white" alt="Version 2.7.0" />
   </a>
   <a href="https://buymeacoffee.com/shiweige" target="_blank">
     <img src="https://img.shields.io/badge/Support_Project-Buy_Me_a_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
@@ -44,7 +44,7 @@
 
 <p align="center">
   <a href="https://raw.githubusercontent.com/ShiweiGe1999/QuizeAssist/main/quizassist.user.js">
-    <img src="https://img.shields.io/badge/👉_INSTALL_QUIZASSIST_NOW_(v2.6.0)-CLICK_HERE-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" height="48" alt="Install QuizAssist Now" />
+    <img src="https://img.shields.io/badge/👉_INSTALL_QUIZASSIST_NOW_(v2.7.0)-CLICK_HERE-00b894?style=for-the-badge&logo=tampermonkey&logoColor=white" height="48" alt="Install QuizAssist Now" />
   </a>
 </p>
 
